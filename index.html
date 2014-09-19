@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="fonts/font-oxygen.css">
+    <link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="unMenu">
+
+        <div id="menu_barre">
+            <div id="menu_item_btn_conn" onclick="click_deconnexion()">
+                <i class="fa fa-sign-out fa-2x"></i>
+                Déconnexion
+            </div>
+            
+            <div id="menu_item_util_courant">
+                <i class="fa fa-question fa-2x"></i>
+                Invité
+            </div>
+            
+            <div id="menu_item_logo">
+                <img src="img/flammes8ball.png" id="menu_logo" onclick="click_accueil()" />
+            </div>
+            
+            <div id="menu_item_recherche">
+                <i id="menu_logo_rech" class="fa fa-search fa-2x"></i>
+                <form id="menu_formulaire_rech">
+                    <input id="menu_rech_btetxt" type="text" name="recherche">
+                    <!--<img id="menu_icone_rech" src="img/search.ico" width=26></img>-->
+                </form>
+            </div>
+            
+            <div id="menu_item_accueil" onclick="click_accueil()">
+                <i class="fa fa-home fa-2x"></i>
+                Accueil
+            </div>
+            
+            <div id="menu_item_listes_lectures" onclick="click_listes_lectures()">
+                <i class="fa fa-list fa-2x"></i>
+                Listes de lectures
+            </div>
+            
+            <div id="menu_item_utilisateurs" onclick="click_utilisateurs()">
+                <i class="fa fa-user fa-2x"></i>
+                Utilisateurs
+            </div>
+            
+            <div id="menu_item_parametres" onclick="click_parametres()">
+                <i class="fa fa-cog fa-2x"></i>
+                Paramètres    
+            </div>
+        </div>
+    </div>
+    <hr />
+    
+    <div>
+        <iframe id="cadre_principal" src="views/accueil.html" frameborder="0" name="cadre_principal"></iframe>
+    </div>
+    <script src="./js/menu.js"></script>
+</body>
+</html>

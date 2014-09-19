@@ -1,0 +1,4 @@
+Ce que je voulais fire pour la page : 
+- Mettre le logo itunes sur une autre ligne
+- Centrer le nom de lalbum p/r à la pochette (verticalement)
+- Mettre le titre entre () sur une autre ligne
