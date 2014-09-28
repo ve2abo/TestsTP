@@ -1,24 +1,32 @@
-function click_deconnexion() {
-//                <!--<a href="views/authentification.html" target="cadre_principal">Déconnexion</a>-->
+function click_connexion() {
     document.getElementById('cadre_principal').src = "views/authentification.html";
 }
 
+function click_deconnexion() {
+    document.getElementById('cadre_principal').src = "views/authentification.html";
+    document.getElementById('menu_item_btn_conn').style.display = "block";
+    document.getElementById('menu_item_btn_deconnexion').style.display = "none";
+    /**document.getElementById('menu_item_util_courant').innerHTML = '<img src="img/guest.png" id="menu_icone_utilisateur" />&nbsp;Invité';**/
+    document.getElementById('menu_item_util_courant').innerHTML = '<div id="menu_user_name">Invité</div> <img src="img/guest.png" id="menu_icone_utilisateur" />';
+    /**document.getElementById('menu_item_util_courant').innerHTML = '<i class="fa fa-question fa-2x"></i>&nbsp;Invité';**/
+}
+
 function click_accueil() {
-//                <!---<a href="views/accueil.html" target="cadre_principal">Accueil</a>--->
     document.getElementById('cadre_principal').src = "views/accueil.html";
 }
 
 function click_listes_lectures() {
-//                <!---<a href="views/liste_lectures.html" target="cadre_principal">Listes de lectures</a>--->
     document.getElementById('cadre_principal').src = "views/liste_lectures.html";
 }
 
 function click_utilisateurs() {
-//                <!--<a href="views/utilisateurs.html" target="cadre_principal">Utilisateurs</a>-->
     document.getElementById('cadre_principal').src = "views/utilisateurs.html";
 }
 
 function click_parametres() {
-//                <!---<a href="views/parametres.html" target="cadre_principal">Paramètres</a>--->
     document.getElementById('cadre_principal').src = "views/parametres.html";
 }
+
+//Gestion du champ de recherche
+document.getElementById("menu_formulaire_rech").action = "views/resultat_rech.html";
+document.getElementById("menu_formulaire_rech").target = "cadre_principal";
