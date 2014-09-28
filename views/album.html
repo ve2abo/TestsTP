@@ -1,177 +1,149 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Album</title>
-    <meta name="description" content="Travail de session dans le cadre du cours Developpement d'applications web">
-    <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="../fonts/font-oxygen.css">
-    <link rel="stylesheet" href="../css/font-awesome.min.css">
-    <link rel="stylesheet" href="../css/album.css">
-    <script type="text/javascript" src="../js/album.js"></script>	
-</head>
-<body>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Album</title>
+        <meta name="description" content="Travail de session dans le cadre du cours Developpement d'applications web">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="../fonts/font-oxygen.css">
+        <link rel="stylesheet" href="../font-awesome-4.2.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/album.css">
+        <link rel="stylesheet" href="../css/albumResponsive.css">
+		<link rel="stylesheet" href = "../css/tous.css">
+        <script type="text/javascript" src="../js/album.js"></script>	
+    </head>
+    <body>
 
-<div id="navbar">
-    <ul class="nav">
-        <li class="titlePage">Page Album</li>
-        <li class="connexion">Connexion</li>
-    </ul>
-</div>
+        <div id="content">
+            <div id="couverture">
+                <img src="http://c0903002.cdn.cloudfiles.rackspacecloud.com/9417-coldplay_ghost_stories_album_artwork.jpg" alt="pic-album"/>
+                <div id="lienItune">
+                    <a href="https://itunes.apple.com/ca/album/ghost-stories/id829909653?uo=4&l=fr" target="itunes_store"></a>
+                </div>
+            </div>
+            <div id="infoAlbum">
+                <h1 id="nomAlbum">
+                    Ghost Stories
+                    <span class="etiquette">Sortie le 19 mai 2014 | 9 chansons (42:37)</span>
+                </h1>
 
-<div id="content">
-    <div id="couverture">
-        <img src="../img/vanhalen.jpg" alt="pic-album"/>
+                <h3 id="nomArtiste">
+                    <a href="artist.html">Coldplay</a>
+                </h3>
+                <h4 id="genre">
+                    <a href="#">Genre: Alternative Rock</a>
+                </h4>
 
-        <div id="lienItune">
-            <a href="https://itunes.apple.com/ca/album/van-halen/id220364749?uo=4&l=fr" target="itunes_store"></a>
+                <div id="listePistes">
+                    <ul id="infoPistes">
+                        <li class="numeroPiste">Num&#233;ro</li>
+                        <li class="numeroPiste-phone">#</li>
+                        <li class="nomPiste">Nom</li>
+                        <li class="dureePiste">Dur&#233;e</li>
+                    </ul>
+                    <ul id="pistes">
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>1</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>Always in My Head</div>
+                            <div class="dureePiste">3:36</div>
+                        </li>
+
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>2</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>Magic</div>
+                            <div class="dureePiste">4:45</div>
+                        </li>
+
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>3</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>Ink</div>
+                            <div class="dureePiste">3:48</div>
+                        </li>
+
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>4</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>True Love</div>
+                            <div class="dureePiste">4:05</div>
+                        </li>
+
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>5</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>Midnight</div>
+                            <div class="dureePiste">4:54</div>
+                        </li>
+
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>6</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>Another's Arms</div>
+                            <div class="dureePiste">3:54</div>
+                        </li>
+
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>7</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>Oceans</div>
+                            <div class="dureePiste">5:21</div>
+                        </li>
+
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>8</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>A Sky Full of Stars</div>
+                            <div class="dureePiste">4:28</div>
+                        </li>
+
+                        <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
+                            <div class="numeroPiste">
+                                <span>9</span>
+                                <a class="btn-play" href="">
+                                    <i class="fa fa-play-circle"></i>
+                                </a>
+                            </div>
+                            <div>O</div>
+                            <div class="dureePiste">7:47</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-	</div>
-    <div id="infoAlbum">
-        <h1 id="nomAlbum">
-            Van Halen
-            <span class="etiquette">Sortie le 10 f&#233;vrier 1978 | 11 chansons (35:22)</span>
-        </h1>
-
-        <h3 id="nomArtiste">
-            <a href="#">Van Halen</a>
-        </h3>
-        <h4 id="genre">
-            <a href="#">Genre: Hard rock, heavy metal</a>
-        </h4>
-
-        <div id="listePistes">
-            <ul id="infoPistes">
-                <li class="numeroPiste">Num&#233;ro</li>
-                <li class="nomPiste">Nom</li>
-                <li class="dureePiste">Dur&#233;e</li>
-            </ul>
-            <ul id="pistes">
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>1</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>Runnin' with the Devil</div>
-                    <div class="dureePiste">3:36</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>2</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>Eruption</div>
-                    <div class="dureePiste">1:42</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>3</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>You Really Got Me</div>
-                    <div class="dureePiste">2:37</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>4</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>Ain't Talkin' 'Bout Love</div>
-                    <div class="dureePiste">3:46</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>5</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>I'm the One</div>
-                    <div class="dureePiste">3:46</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>6</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>Jamie's Cryin</div>
-                    <div class="dureePiste">3:30</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>7</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>Atomic Punk</div>
-                    <div class="dureePiste">3:01</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>8</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>Feel Your Love Tonight</div>
-                    <div class="dureePiste">3:42</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>9</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>Little Dreamer</div>
-                    <div class="dureePiste">3:22</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>10</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>Ice Cream Man</div>
-                    <div class="dureePiste">3:19</div>
-                </li>
-
-                <li onmouseover="displayPlayBtn(this);" onmouseout="hidePlayBtn(this);">
-                    <div class="numeroPiste">
-                        <span>11</span>
-                        <a class="btn-play" href="">
-                            <i class="fa fa-play-circle"></i>
-                        </a>
-                    </div>
-                    <div>On Fire</div>
-                    <div class="dureePiste">3:00</div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-</body>
+    </body>
 </html>
