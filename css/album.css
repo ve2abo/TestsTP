@@ -4,23 +4,6 @@ body {
     font-size: 16px;
 }
 
-ol, ul {
-    list-style: none;
-}
-
-blockquote, q {
-    quotes: none;
-}
-
-blockquote:before, blockquote:after, q:before, q:after {
-    content: '';
-    content: none;
-}
-
-#navbar {
-    margin-bottom: 25px;
-}
-
 .nav {
     margin-bottom: 0;
     margin-top: 0;
@@ -39,10 +22,20 @@ blockquote:before, blockquote:after, q:before, q:after {
 
 .nav li.connexion {
     float: right;
+    color: #008fd5;
+}
+.nav li.connexion-phone {
+    float: right;
+    display: none;
+    color: #008fd5;
+    cursor: pointer;
+    font-size: 22px;
 }
 
-.nav li.titlePage {
-    color: #008fd5;
+.nav li.titlePage img {
+    position: absolute;
+    top: 8px;
+    width: 146px;
 }
 
 table {
@@ -51,7 +44,7 @@ table {
 }
 
 #content {
-    width: 900px;
+    padding: 45px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -185,6 +178,10 @@ ul#pistes li div {
 
 ul#pistes .numeroPiste, ul#pistes .dureePiste {
     font-size: 12px;
+}
+
+ul#infoPistes li.numeroPiste-phone {
+    display: none;
 }
 
 #lienItune {

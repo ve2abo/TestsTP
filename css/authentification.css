@@ -5,6 +5,8 @@
     margin-right: auto;
     width: 300px;
     height: 100px;
+    font-family: 'Oxygen', sans-serif;
+    font-size: 12px;
 }
 
 #zone_connexion_texte {
@@ -13,24 +15,9 @@
     height: 100px;
 }
 
-#zone_connexion_texte_user {
+#zone_connexion_texte_user, #zone_connexion_texte_password {
     margin-top: 4px;
     margin-bottom: 10px;
-}
-
-#zone_connexion_texte_password {
-    margin-top: 4px;
-    margin-bottom: 10px;
-}
-
-#zone_connexion_textbox_user {
-    margin-top: 4px;
-    margin-bottom: 4px;
-}
-
-#zone_connexion_textbox_password {
-    margin-top: 4px;
-    margin-bottom: 4px;
 }
 
 #zone_connexion_textbox {
@@ -39,16 +26,27 @@
     height: 100px;
 }
 
-#zone_connexion_bouton_connexion {
+#zone_connexion_textbox_user, #zone_connexion_textbox_password, #zone_connexion_bouton_connexion {
     margin-top: 4px;
     margin-bottom: 4px;
 }
 
-@media screen and (max-width:1800px) {
+#zone_connexion_bouton_connexion {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80px;
+    background-color: #008fd5;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+@media screen and (max-width:1200px) {
     
 }
 
 
-@media screen and (max-width:800px) {
+@media screen and (max-width:600px) {
 
 }

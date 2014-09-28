@@ -2,9 +2,9 @@ body {
     margin: 0px;
     font-family: 'Oxygen', sans-serif;
     font-size: 16px;
-/*  color: #000000;
-    background-color: #ffffff;  */
 }
+
+/*.unMenu {}*/
 
 #menu_barre {
     background-color: #ffffff;
@@ -14,94 +14,91 @@ body {
     height: 60px;
 }
 
-#menu_logo {
-    width: 90px;
-    height: 60px;
-    margin: 0;
-    padding: 0;
-    z-index: 100;
-}
-
 [id*="menu_item_"] {
     float: left;
-    color: #0000FF;
+    color: #008fd5;
     background-color: #ffffff;
     font-weight: bold;
-    /*text-transform: uppercase;
-    width: 190px;
-    height: 60px;*/
-    padding: 14px;
-}
-
-[id*="menu_item_"]:hover {
-    background-color: #0000ff;
-    color: #FFFFFF;
-}
-
-#menu_item_btn_conn {
-    float: right;
-}
-
-#menu_item_util_courant {
-    float : right;
-    width: auto;
-}
-
-#menu_item_util_courant:hover {
-    color: #0000FF;
-    background-color: #ffffff;
+    padding: 14px 6px;
 }
 
 #menu_item_logo {
     margin: 0;
     padding: 0;
-    width: 100px;
+    width: 200px;
 }
 
-#menu_item_logo:hover {
-    color: #0000FF;
-    background-color: #ffffff;
+#menu_logo {
+    width: 200px;
+    height: 61px;
+    margin: 0;
+    padding: 0;
+    z-index: 10;
 }
 
-#menu_item_recherche:hover {
-    color: #0000FF;
-    background-color: #ffffff;
+#menu_item_btn_conn:hover, #menu_item_accueil:hover, #menu_item_listes_lectures:hover, #menu_item_utilisateurs:hover, #menu_item_parametres:hover, #menu_item_btn_deconnexion:hover {
+    background-color: #008fd5;
+    color: #FFFFFF;
+    cursor:pointer;
 }
+
+#menu_item_btn_conn, #menu_item_btn_deconnexion {
+    float: right;
+}
+
+#menu_item_btn_deconnexion {
+    display: none;
+}
+
+#menu_item_util_courant {
+    float : right;
+    width: auto;
+    cursor:default;
+}
+
+#menu_icone_utilisateur {
+    float: right;
+    height: 32px;
+    padding: 0px;
+}
+
+#menu_user_name {
+    float: right;
+    padding-top: 10px;
+    padding-bottom: 2px;
+}
+
+/*#menu_item_recherche {}*/
+
+#menu_logo_rech {
+    width: 34px;
+    float: left;
+}
+
 #menu_formulaire_rech {
-    display: inline;
     padding: 0px;
     margin: 0px;
-    /*width : 190px;*/
-}
-
-#menu_formulaire_rech:hover {
-    color: #0000FF;
-    background-color: #ffffff;
+    float: left;
 }
 
 #menu_rech_btetxt {
-    /*float: right;*/
     padding: 2px;
     margin: 2px;
-    /*width : 152px;*/
     height : 20px;
 }
 
-/*a:link, a:visited {
-    display: block;
-    font-weight: bold;
-    color: #0000FF;
-    background-color: #ffffff;
-    text-align: center;
-    padding: 4px;
-    text-decoration: none;
-    text-transform: uppercase;
-}
+/*#menu_item_accueil {}*/
 
-a:hover, a:active {
-    background-color: #0000ff;
-    color: #FFFFFF;
-}*/
+/*#menu_item_listes_lectures {}*/
+
+/*#menu_item_utilisateurs {}*/
+
+/*#menu_item_parametres {}*/
+
+hr {
+    margin: 0px;
+    padding: 0px;
+}
 
 #cadre_principal{
     width: 100%;
@@ -114,7 +111,7 @@ a:hover, a:active {
     }
     
     #menu_logo {
-        width: 32px;
+        width: 66px;
         height: 20px;
     }
 
@@ -122,28 +119,44 @@ a:hover, a:active {
         font-size: 8px;
         font-weight: normal;
         height: 20px;
-        padding: 1px 6px;
+        padding: 1px 8px;
+    }
+
+    [id*="menu_item_"]:hover > .menu_etiquettes {
+        display: inline;
     }
 
     #menu_item_logo {
-        width: 40px;
+        width: 66px;
     }
     
-    #menu_icone_rech {
-        width: 20px;
+    #menu_icone_utilisateur {
+        height: 16px;
+    }
+    
+    #menu_user_name {
+        padding-top: 5px;
+        padding-bottom: 2px;
+    }
+    
+    #menu_logo_rech {
+        width: 18px;
     }
     
     #menu_formulaire_rech {
-        width: 120px;
         height : 20px;
+        float: left;
     }
     
     #menu_rech_btetxt {
-        width: 88px;
         height : 12px;
-        font-size: 8px;
+        font-size: 10px;
         margin: 0px;
         padding: 1px;
+    }
+    
+    .menu_etiquettes {
+        display: none;
     }
     
 }
@@ -151,8 +164,9 @@ a:hover, a:active {
 
 @media screen and (max-width:600px) {
     #menu_logo {
-        width: 90px;
-        height: 60px;
+        float:left;
+        width: 200px;
+        height: 61px;
         z-index: 100;
     }
     
@@ -163,7 +177,7 @@ a:hover, a:active {
     
     #menu_barre:hover {
         width: 100%;
-        height: 360px;
+        height: 420px;
         overflow-y: hidden;
         z-index: 100;
 
@@ -174,22 +188,61 @@ a:hover, a:active {
         font-size: 16px;
         width: 100%;
         padding: 14px;
-        float: none;
+        float: left;
         height: auto;
     }
 
+    #menu_item_btn_conn {
+        clear: both;
+        float: left;
+        text-align: left;
+        width: 100%;
+    }
+    
+    #menu_item_btn_deconnexion {
+        float: left;
+    }
+
+    #menu_icone_utilisateur {
+        height: 32px;
+    }
+
+    #menu_user_name {
+        padding-top: 10px;
+        padding-bottom: 2px;
+    }
+
+
     #menu_item_logo {
-        width: 100px;
+        width: 200px;
+    }
+
+    #menu_item_recherche {
+        clear: both;
+        height: 32px;
+    }
+
+    #menu_logo_rech {
+        width: 34px;
     }
 
     #menu_formulaire_rech {
         width: auto;
-        display: inline;
-        /*float: left;*/
+        height: auto;
     }
 
-    #menu_item_btn_conn {
-        text-align: right;
-        width: auto;
+    #menu_rech_btetxt {
+        height : 20px;
+        font-size: 16px;
+        margin: 2px;
+        padding: 2px;
+    }
+    
+    #menu_item_accueil {
+        clear: both;
+    }
+
+    .menu_etiquettes {
+        display: inline-block;
     }
 }

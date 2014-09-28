@@ -1,0 +1,97 @@
+
+
+@media only screen and (max-width: 1080px) {
+	/* Ajoute le bouton + pour affichier la bio de l'artiste */
+	#afficherBioBtn {
+		display: none;
+	}
+	
+	/* Enlève l'espace entre le genre et l'icone iTunes */
+	#genre {
+		margin-bottom: 20px;
+	}	
+	
+	/* Cache le bouton - pour réduire la bio de l'artiste */
+    #reduireBioBtn {
+        display: none;
+    }
+	
+	/* Cache la bio de l'artiste */
+	#bioText {
+		font-size: 12px;
+	
+	}
+}
+
+
+@media only screen and (max-width: 1000px) {
+	
+	#reduireBioBtn {
+		display: none;
+	}
+
+	#afficherBioBtn {
+		display: none;
+	}	
+	
+	#bioText {
+		display: none;
+	
+	}	
+	
+	#albumList ul {
+		vertical-align: top;
+		display: block;
+	}
+
+	#concert{
+		margin-left: 0px;
+		margin-top: 100px;
+		
+	}
+}
+
+@media only screen and (max-width: 630px) {
+	
+	#iTunes {
+		margin-left: 0px;
+	}
+	#liens {
+		height: 14px;
+	}
+	
+}
+
+@media only screen and (max-width: 320px) {
+	
+	.album img {
+		width: 70px;
+		height: 70px;
+	}
+	
+	#iTunes {
+		margin-left: 0px;
+	}
+	
+	#description {
+		display: block;
+		height: 200px;
+		margin-bottom: 20px;
+	}
+	
+	.album {
+		margin-right: 0px;
+	}
+	
+	#content {
+		padding: 20px;
+	}
+	
+	#concert{
+		margin-top: 50px;
+		
+	}
+	
+}
+
+
