@@ -1,64 +1,100 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-    <link rel="stylesheet" href="css/menu.css">
-    <link rel="stylesheet" href="fonts/font-oxygen.css">
-    <link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
-</head>
-<body>
-    <div class="unMenu">
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <div id="menu_barre">
-            <div id="menu_item_btn_conn" onclick="click_deconnexion()">
-                <i class="fa fa-sign-out fa-2x"></i>
-                Déconnexion
-            </div>
+        <title>Listes de lectures</title>
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- other style considerations -->
+        <link href="./css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="panel panel-default" id="div_listes_lectures">
+                <script id="templateListeLecture" type="text/template">
+                    <!--/* Default panel contents */>
+                    <div class="panel-heading">Listes de lectures</div>
             
-            <div id="menu_item_util_courant">
-                <i class="fa fa-question fa-2x"></i>
-                Invité
-            </div>
-            
-            <div id="menu_item_logo">
-                <img src="img/flammes8ball.png" id="menu_logo" onclick="click_accueil()" />
-            </div>
-            
-            <div id="menu_item_recherche">
-                <i id="menu_logo_rech" class="fa fa-search fa-2x"></i>
-                <form id="menu_formulaire_rech">
-                    <input id="menu_rech_btetxt" type="text" name="recherche">
-                    <!--<img id="menu_icone_rech" src="img/search.ico" width=26></img>-->
-                </form>
-            </div>
-            
-            <div id="menu_item_accueil" onclick="click_accueil()">
-                <i class="fa fa-home fa-2x"></i>
-                Accueil
-            </div>
-            
-            <div id="menu_item_listes_lectures" onclick="click_listes_lectures()">
-                <i class="fa fa-list fa-2x"></i>
-                Listes de lectures
-            </div>
-            
-            <div id="menu_item_utilisateurs" onclick="click_utilisateurs()">
-                <i class="fa fa-user fa-2x"></i>
-                Utilisateurs
-            </div>
-            
-            <div id="menu_item_parametres" onclick="click_parametres()">
-                <i class="fa fa-cog fa-2x"></i>
-                Paramètres    
-            </div>
-        </div>
-    </div>
-    <hr />
+                    <!--/* Table */-->
+                    <table class="table table-hover">
+                        <colgroup>
+                            <col id='Col1'>
+                            <col id='Col2'>
+                        </colgroup>                    
+                        <tbody id="tableListesLectures">
+                            <% _.each(tasks, function(task){ %>
+                                    <tr class="tableRowItem" id="<%= task.id %>">
+                                        <td class="listname"><%=task.task%></td>
+                                        <td>
+                                            <span class="glyphicon glyphicon-trash" data-id="<%= task.id %>"></span>
+                                            <span class="glyphicon glyphicon-pencil" data-id="<%= task.id %>"></span>
+                                        </td>
+                                    </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                    <div class="panel-footer">
+                        <div class="input-group" id='divAjouterListesLectures'>
+                            <input type="text" class="form-control" id="txtNouvListesLectures">
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="button" id="boutonAjouterListe">Ajouter</button>
+                            </span>
+                        </div>
+                    </div> <!--/* panel-footer */>
+                </script-->                 
+            </div> <!-- panel -->
     
-    <div>
-        <iframe id="cadre_principal" src="views/accueil.html" frameborder="0" name="cadre_principal"></iframe>
-    </div>
-    <script src="./js/menu.js"></script>
-</body>
+            <div class="panel panel-default" id="div_contenu_liste">
+                <!-- Table -->
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-1">#</th>
+                            <th>Titre</th>
+                            <th>Artiste</th>
+                            <th class="col-sm-1">Durée</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableContenuListe"></tbody><!--Le contenu de la liste de chanson ajouté par javaScript est ajouté ici.-->
+                </table>
+                <div class="panel-footer">
+                    <div class="input-group" id='divAjouterTexte'>
+                        <input type="text" class="form-control" id="txtNouvTache">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button" id="boutonAjouterItem">Ajouter</button>
+                        </span>
+                    </div>
+                </div> <!-- panel-footer -->
+            </div> <!-- panel -->
+
+
+
+            <!-- jQuery -->
+            <script src="./js/lib/jquery-1.11.1.js"></script>
+
+            <!-- jQuery -->
+            <script src="./js/lib/jquery-1.11.1.js"></script>
+
+            <!-- UNDERSCORE.JS -->
+            <script src="./js/lib/underscore.js"></script>
+
+            <!-- BACKBONE.JS -->
+            <script src="./js/lib/backbone.js"></script>
+
+            <!-- Bootstrap -->
+            <script src="js/bootstrap.min.js"></script>
+
+            <!-- javascript spécifique à cette application-->
+            <script src="./js/models/modeleListeLectures.js"></script>
+            <script src="./js/collections/colListesLectures.js"></script>
+            <script src="./js/views/vueListesLectures.js"></script>
+            <script src="./js/app.js"></script>
+
+        </div><!-- container-fluid -->
+    </body>
 </html>
