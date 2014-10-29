@@ -1,0 +1,45 @@
+@media only screen and (max-width: 768px) {
+    #content {
+        padding: 20px 10px 10px 10px;
+    }
+
+    ul#pistes li {
+        padding-left: 0px;
+    }
+
+    ul#infoPistes li.numeroPiste {
+        padding-left: 5px;
+    }
+
+    .etiquette {
+        display: block;
+        float: none;
+        margin-bottom: 5px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    ul#infoPistes li.numeroPiste {
+        display:none;
+    }
+
+    ul#infoPistes li.numeroPiste-phone {
+        display: inline-block;
+        width: 28px;
+    }
+
+    ul#pistes li div.numeroPiste {
+        width: 28px;
+    }
+
+    ul#pistes li {
+        padding: 15px 0px;
+    }
+
+    .title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 140px;
+    }
+}

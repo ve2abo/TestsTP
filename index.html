@@ -1,100 +1,280 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <!--/* Nécessaire pour forcer les cellulaire a respecter leur taille d'écran */-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>Listes de lectures</title>
+        <title>U-Beat équipe 8</title>
 
-        <!-- Bootstrap -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <!--/* Bootstrap */-->
+        <link href="./css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- other style considerations -->
-        <link href="./css/style.css" rel="stylesheet">
+        <!--/* autres fichiers de style */-->
+        <link rel="stylesheet" href="css/tous.css">
+        <link rel="stylesheet" href="css/menu.css">
+        <link rel="stylesheet" href="css/authentification.css">
+
+        <!--/* Nécessaire pour la police de caractère */-->
+        <link rel="stylesheet" href="fonts/font-oxygen.css">
+
+
+        <!--/* Nécessaire pour les icones du menu */-->
+        <link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
     </head>
     <body>
-        <div class="container-fluid">
-            <div class="panel panel-default" id="div_listes_lectures">
-                <script id="templateListeLecture" type="text/template">
-                    <!--/* Default panel contents */>
-                    <div class="panel-heading">Listes de lectures</div>
-            
-                    <!--/* Table */-->
-                    <table class="table table-hover">
-                        <colgroup>
-                            <col id='Col1'>
-                            <col id='Col2'>
-                        </colgroup>                    
-                        <tbody id="tableListesLectures">
-                            <% _.each(tasks, function(task){ %>
-                                    <tr class="tableRowItem" id="<%= task.id %>">
-                                        <td class="listname"><%=task.task%></td>
-                                        <td>
-                                            <span class="glyphicon glyphicon-trash" data-id="<%= task.id %>"></span>
-                                            <span class="glyphicon glyphicon-pencil" data-id="<%= task.id %>"></span>
-                                        </td>
-                                    </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
-                    <div class="panel-footer">
-                        <div class="input-group" id='divAjouterListesLectures'>
-                            <input type="text" class="form-control" id="txtNouvListesLectures">
-                            <span class="input-group-btn">
-                                <button class="btn btn-primary" type="button" id="boutonAjouterListe">Ajouter</button>
-                            </span>
+
+        <div id="menu_barre">
+            <script id="templateMenuBarre" type="text/template">
+                <!-- /*Logo Ubeat dans la barre de menu */-->
+                <div id="menu_item_logo">
+                    <img src="img/ubeat-blue.png" id="menu_logo" />
+                </div>
+
+                <!-- /*Nom de l'utilisateur connecté */-->
+                <div id="menu_item_util_courant">
+                    <div id="menu_user_name">Invité</div>
+                    <img src="img/guest.png" id="menu_icone_utilisateur" />
+                </div>
+
+                <!--/* Les items suivant du menu sont déroulant à 600px ou moins */-->
+                <div id="items_menu_deroulant">
+                    <!--/* Bouton de connexion */-->
+                    <div id="menu_item_btn_conn">
+                        <i class="fa fa-sign-in fa-2x"></i>
+                        Connexion
+                    </div>
+
+                    <!--/* Bouton de deconnexion */-->
+                    <div id="menu_item_btn_deconnexion">
+                        <i class="fa fa-sign-out fa-2x"></i>
+                        Déconnexion
+                    </div>
+
+                    <!--/* Champ de recherche */-->
+                    <div id="menu_item_recherche">
+                        <form id="menu_formulaire_rech">
+                            <i id="menu_logo_rech" class="fa fa-search"></i>
+                            <input id="menu_rech_btetxt" type="text" name="recherche" placeholder="Rechercher">
+                        </form>
+                    </div>
+
+                    <!--/* Bouton Accueil */--> 
+                    <div id="menu_item_accueil">
+                        <i class="fa fa-home fa-2x"></i>
+                        <span class="menu_etiquettes">Accueil</span>
+                    </div>
+
+                    <!--/* Bouton Liste de lecture */-->
+                    <div id="menu_item_listes_lectures">
+                        <i class="fa fa-list fa-2x"></i>
+                        <span class="menu_etiquettes">Listes de lectures</span>
+                    </div>
+
+                    <!--/* Bouton utilisateurs */-->
+                    <div id="menu_item_utilisateurs">
+                        <i class="fa fa-user fa-2x"></i>
+                        <span class="menu_etiquettes">Utilisateurs</span>
+                    </div>
+
+                    <!--/* Bouton paramètres */-->
+                    <div id="menu_item_parametres">
+                        <i class="fa fa-cog fa-2x"></i>
+                        <span class="menu_etiquettes">Paramètres</span>
+                    </div>
+                </div>
+
+            </script>
+        </div>
+
+        <!--/* Barre horizontale sous le menu */-->
+        <hr />
+
+        <!--/* Cadre pour chargement des pages relié aux boutons */-->
+        <div id="cadre_principal">
+            <!--/* Template pour vue connexion */-->
+            <script id="templateZoneConnexion" type="text/template">
+                <div id="content">
+                    <div id="zone_connexion">
+                        <div id="zone_connexion_texte">
+                            <p id="zone_connexion_texte_user">Utilisateur :</p>
+                            <p id="zone_connexion_texte_password">Mot de passe :</p>                    
                         </div>
-                    </div> <!--/* panel-footer */>
-                </script-->                 
-            </div> <!-- panel -->
-    
-            <div class="panel panel-default" id="div_contenu_liste">
-                <!-- Table -->
+                        <div id="zone_connexion_textbox">
+                            <form>
+                                <input id="zone_connexion_textbox_user" maxlength="5" type="text" name="user" required="required">
+                                <input id="zone_connexion_textbox_password" maxlength="5" type="password" name="password" required="required">
+                            </form>
+                            <div id="zone_connexion_bouton_connexion">Connexion</div>
+                        </div>
+                    </div>
+                </div>
+            </script>
+            
+            <!--/* Template pour vue paramètres */-->
+            <script id="templateParametres" type="text/template">
+                <p style="text-align: left;font-size: 24px;">PAGE DES PARAMÈTRES</p>
+            </script>
+
+            <!--/* Template pour vue utilisateurs */-->
+            <script id="templateUtilisateurs" type="text/template">
+                <p style="text-align: left;font-size: 24px;">PAGE DES UTILISATEURS</p>
+            </script>
+
+            <!--/* Template pour vue listes de lectures */-->
+            <script id="templateListesLectures" type="text/template">
+                <p style="text-align: left;font-size: 24px;">PAGE LISTE DE LECTURE</p>
+                <div>
+                    <a href="./views/album.html">Voir la page de l'album</a>
+                </div>
+                <div>
+                    <a href="./views/artist.html">Voir la page de l'artiste</a>
+                </div>
+            </script>
+
+            <!--/* Template pour vue listes de lectures */-->
+            <script id="templateLesListeLecture" type="text/template">
+                <!--/* Default panel contents */-->
+                <div class="panel-heading">Listes de lectures</div>
+
+                <!--/* Table */-->
                 <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th class="col-sm-1">#</th>
-                            <th>Titre</th>
-                            <th>Artiste</th>
-                            <th class="col-sm-1">Durée</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableContenuListe"></tbody><!--Le contenu de la liste de chanson ajouté par javaScript est ajouté ici.-->
+                    <colgroup>
+                        <col id='Col1'>
+                        <col id='Col2'>
+                    </colgroup>                    
+                    <tbody id="tasktable">
+                        <% _.each(listesLectures, function(listes){ %>
+                            <tr id="<%= listes.id %>">
+                                <td class="input-group">
+                                    <input type="text" class="form-control" value="<%=listes.name%>">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button">
+                                            <span class="glyphicon glyphicon-floppy-disk" data-id="<%= listes.id %>"></span>
+                                        </button>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="glyphicon glyphicon-trash" data-id="<%= listes.id %>"></span>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
                 </table>
+
+                <!--/* Panel-footer incluant zone de texte et bouton ajouter. */-->
                 <div class="panel-footer">
                     <div class="input-group" id='divAjouterTexte'>
-                        <input type="text" class="form-control" id="txtNouvTache">
+                        <input type="text" class="form-control" id="txtNouvListe">
                         <span class="input-group-btn">
-                            <button class="btn btn-primary" type="button" id="boutonAjouterItem">Ajouter</button>
+                            <button class="btn btn-primary" type="button" id="boutonAjouterListe">Ajouter</button>
                         </span>
                     </div>
-                </div> <!-- panel-footer -->
-            </div> <!-- panel -->
+                </div> <!--/* panel-footer */-->
+            </script>                 
 
 
+            <!--/* Template pour vue d'une liste de lecture */-->
+            <script id="templateUneListeLecture" type="text/template">
+                <!--/* Default panel contents */-->
+                <div class="panel-heading">Liste de lecture</div>
 
-            <!-- jQuery -->
-            <script src="./js/lib/jquery-1.11.1.js"></script>
+                <!--/* Table */-->
+                <table class="table table-hover">
+                    <colgroup>
+                        <col id='Col1'>
+                        <col id='Col2'>
+                        <col id='Col3'>
+                        <col id='Col4'>
+                    </colgroup>                    
+                    <tbody id="listeLecture">
+                        //Header table des pistes.
+                        <tr>
+                            <th>Nom piste</th>
+                            <th>Artiste</th>
+                            <th>Album</th>
+                            <th>Durée</th>
+                        </tr>
 
-            <!-- jQuery -->
-            <script src="./js/lib/jquery-1.11.1.js"></script>
+                        //Affichage des pistes.
+                        <% _.each(tracks, function(piste){ %>
+                            <tr id="<%= piste.id %>">
+                                <td class="input-group">
+                                    /*<div class="col-md-1">
+                                     //   <button class="glyphicon glyphicon-play"></button>
+                                    </div>*/
+                                    <div class="col-md-1">"<%=piste.trackName%>"</div>
+                                    <div class="col-md-1">"<%=piste.artistName%>"</div>
+                                    <div class="col-md-1">"<%=piste.collectionName%>"</div>
+                                    <div class="col-md-1">"<%=piste.trackTimeMillis%>"</div>
+                                    /*<span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button">
+                                            <span class="glyphicon glyphicon-floppy-disk" data-id="<%= listes.id %>"></span>
+                                        </button>
+                                    </span>*/
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
 
-            <!-- UNDERSCORE.JS -->
-            <script src="./js/lib/underscore.js"></script>
+                <!--/* Panel-footer incluant zone de texte et bouton ajouter. */-->
+                /*<div class="panel-footer">
+                    <div class="input-group" id='divAjouterTexte'>
+                        <input type="text" class="form-control" id="txtNouvListe">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button" id="boutonAjouterListe">Ajouter</button>
+                        </span>
+                    </div>
+                </div> <!-- panel-footer -->*/
+            </script>
 
-            <!-- BACKBONE.JS -->
-            <script src="./js/lib/backbone.js"></script>
 
-            <!-- Bootstrap -->
-            <script src="js/bootstrap.min.js"></script>
+            <!--/* Template pour vue accueil */-->
+            <script id="templateAccueil" type="text/template">
+                <p style="text-align: left;font-size: 24px;">PAGE D`ACCUEIL</p>
+            </script>
 
-            <!-- javascript spécifique à cette application-->
-            <script src="./js/models/modeleListeLectures.js"></script>
-            <script src="./js/collections/colListesLectures.js"></script>
-            <script src="./js/views/vueListesLectures.js"></script>
-            <script src="./js/app.js"></script>
+        </div>
 
-        </div><!-- container-fluid -->
+        <!--/* jQuery */-->
+        <script src="./js/lib/jquery-1.11.1.js"></script>
+
+        <!--/* UNDERSCORE.JS */-->
+        <script src="./js/lib/underscore.js"></script>
+
+        <!--/* BACKBONE.JS */-->
+        <script src="./js/lib/backbone.js"></script>
+
+        <!--/* Bootstrap */-->
+        <script src="./js/bootstrap.min.js"></script>
+
+        <!--/* javascript spécifique à cette application*/-->
+
+            <!--/* Autres */-->
+            <script src="./js/index.js"></script>
+            <script src="./js/menu.js"></script>
+
+            <!--/* Modeles */-->
+            <script src="./js/models/modele_utilisateur.js"></script>
+            <script src="./js/models/modele_piste.js"></script>
+            <!--script src="./js/models/modele_une_liste_lecture.js"></script-->
+            <script src="./js/models/modele_liste_lectures.js"></script>
+
+            <!--/* Collections */-->
+            <script src="./js/collections/col_une_liste_lecture.js"></script>
+            <script src="./js/collections/col_listes_lectures.js"></script>
+            <!--script src="./js/collections/col_utilisateurs.js"></script-->
+
+            <!--/* Vues */-->
+            <script src="./js/views/vue_connexion.js"></script>
+            <script src="./js/views/vue_parametres.js"></script>
+            <script src="./js/views/vue_utilisateurs.js"></script>
+            <script src="./js/views/vue_les_listes_lectures.js"></script>
+            <script src="./js/views/vue_une_liste_lectures.js"></script>
+            <script src="./js/views/vue_accueil.js"></script>
+            <script src="./js/views/vue_menu.js"></script>
+
+
     </body>
 </html>

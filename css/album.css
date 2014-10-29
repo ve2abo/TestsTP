@@ -1,0 +1,124 @@
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#content {
+    padding: 45px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    color: #32393d;
+    font-size: 22px;
+    font-weight: normal;
+}
+
+#couverture img {
+    border: none;
+    width: 100%;
+}
+
+#nomAlbum {
+    margin-bottom: 2px;
+}
+
+#nomArtiste {
+    font-size: 14px;
+    font-weight: normal;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+#nomArtiste a {
+    color: #a5a5a5;
+    text-decoration: none;
+}
+
+#nomArtiste a:hover {
+    text-decoration: underline;
+}
+
+#genre {
+    font-size: 11px;
+    font-style: normal;
+    font-weight: lighter;
+    margin-bottom: 0;
+    margin-top: 4px;
+}
+
+.etiquette {
+    color: #008fd5;
+    float: right;
+    font-size: 10px;
+    font-weight: lighter;
+    padding-top: 6px;
+}
+
+#ListePistes {
+    margin-top: 33px;
+}
+
+ul#infoPistes {
+    border-bottom: 1px solid #efefef;
+    color: #333333;
+    font-size: 14px;
+    margin-bottom: 0;
+    margin-top: 30px;
+    padding-bottom: 8px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+ul#infoPistes li {
+    display: inline-block;
+}
+
+.numeroPiste a.btn-play {
+    color: #008fd5;
+    font-size: 23px;
+    left: 10px;
+    position: absolute;
+    text-decoration: none;
+    top: -7px;
+}
+
+ul#pistes {
+    margin-bottom: 0;
+    margin-top: 2px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+ul#pistes li {
+    border-bottom: 1px solid #f5f5f5;
+    color: #333333;
+    font-size: 14px;
+    padding: 12px 7px;
+}
+
+ul#pistes li:hover {
+    color: #008fd5;
+    cursor: pointer;
+}
+
+ul#pistes .numeroPiste, ul#pistes .dureePiste {
+    font-size: 12px;
+}
+
+ul#infoPistes li.numeroPiste-phone {
+    display: none;
+}
+
+#lienItune {
+    margin-top: 15px;
+}
+
+#lienItune a {
+    background: url("https://linkmaker.itunes.apple.com/htmlResources/assets/fr_ca//images/web/linkmaker/badge_itunes-lrg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    display: inline-block;
+    height: 40px;
+    overflow: hidden;
+    width: 110px;
+}

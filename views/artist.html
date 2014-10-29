@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+    <head>	
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">	
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Artist</title>
+        <link rel = "stylesheet" href = "../css/artist.css">
+        <link rel = "stylesheet" href = "../css/artistResponsive.css">
+        <link rel = "stylesheet" href = "../css/tous.css">
+        <link rel="stylesheet" href="../fonts/font-oxygen.css">
+        <link rel="stylesheet" href="../font-awesome-4.2.0/css/font-awesome.min.css">
+
+        <script type="text/javascript" src="../js/artist.js" ></script>
+        <link rel="shortcut icon" href=".\favicon(1).ico">			
+    </head>
+    <body>
+        <div id="content">
+            <div id="description">
+                <div id="artistPicture" onmouseover="arret()">
+
+                    <div id="fisrt" class="group">
+                        <img class = "image" src="../img/coldplay_1.jpg" alt="img" />
+                    </div>
+
+                    <div id="second" class="group">
+                        <img class = "image" src="../img/coldplay_2.jpg" alt="img" />
+                    </div>
+
+                    <div id="third" class="group">
+                        <img class = "image" src="../img/coldplay_3.jpg" alt="img" />
+                    </div>
+
+                    <div id="fourth" class="group">
+                        <img class = "image" src="../img/coldplay_4.jpg" alt="img" />
+                    </div>
+                </div>
+
+                <div id="artistInfos">
+                    <h1>Coldplay</h1>
+
+                    <div id="bio">
+                        <div id="boutonBio">
+                            <a id="afficherBioBtn" onclick="changeBio()">
+                                <i class="fa fa-plus-square"></i>
+                            </a>
+
+                            <a id="reduireBioBtn" onclick="changeBio()">
+                                <i class="fa fa-minus-square"></i>
+                            </a>
+                        </div>
+                        <a id="bioText">Coldplay est un groupe de rock britannique formé à Londres en 1996 par le chanteur, guitariste et pianiste Chris Martin et le guitariste Jon Buckland. En 1998, le groupe voit le jour sous son appellation définitive et sort deux premiers EPs. Ils en profitent alors pour signer chez le label Parlophone. Avec six albums studio publiés, le dernier étant Ghost Stories, sorti en 2014, Coldplay est aujourd'hui l'un des plus grands groupes à succès du nouveau millénaire avec près de 60 millions d'albums vendus.</a>
+                    </div>
+                </div>
+
+                <div id="liens">
+                    <h4 id="genre">
+                        <a href="#" class="btn btn-primary">Genre: Alternative Rock</a>
+                    </h4>
+                </div>
+            </div>
+
+            <div>
+                <a id="iTunes" href = "https://itunes.apple.com/fr/artist/coldplay/id471744" target="_blank">
+                    <img src="../img/Available_on_iTunes_Badge_FR_110x40_1108.png" alt="img" />
+                </a>
+            </div>
+
+            <div id="albumList">
+
+                <div id="center">
+                    <ul id="studio" class ="allAlbums">
+                        <h4>Albums studio</h4>
+
+                        <li>
+                            <a href="album.html">
+                                <div class="album">
+                                    <img src="../img/ghost_stories.jpg" alt="img" />
+                                </div>
+                                <div class="title">Ghost Stories</div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <div class="album">
+                                <a href="">
+                                    <img src="../img/mylo_xyloto.jpg" alt="img" />
+                                </a>
+                            </div>
+                            <div class="title">Mylo Xyloto</div>
+                        </li>					
+
+                        <li>
+                            <div class="album">
+                                <a href="">
+                                    <img src="../img/viva_la_vida.jpg" alt="img" />
+                                </a>
+                            </div>
+                            <div class="title">Viva la Vida</div>
+                        </li>	
+
+                        <li>
+                            <div class="album">
+                                <a href="">
+                                    <img src="../img/X&Y.gif" alt="img" />
+                                </a>
+                            </div>
+                            <div class="title">X&Y </div>
+                        </li>
+
+                        <li>
+                            <div class="album">
+                                <a href="">
+                                    <img src="../img/a_rush_of_blood_to_the_head.jpg" alt="img" />
+                                </a>
+                            </div>
+                            <div class="title">A Rush of Blood to the Head</div>
+                        </li>					
+
+                        <li>
+                            <div class="album">
+                                <a href="">
+                                    <img src="../img/parachutes.jpg" alt="img" />
+                                </a>
+                            </div>
+                            <div class="title">Parachutes</div>
+                        </li>
+                    </ul>
+
+                    <ul id="concert" class ="allAlbums">
+                        <h4>Albums live</h4>
+
+                        <li>
+                            <div class="album">
+                                <a href="">
+                                    <img src="../img/live_2012.png" alt="img" />
+                                </a>
+                            </div>
+                            <div class="title">Live 2012</div>
+                        </li>						
+
+                        <li>
+                            <div class="album">
+                                <a href="">
+                                    <img src="../img/leftrightleftrightleft.jpg" alt="img" />
+                                </a>
+                            </div>
+                            <div class="title">LeftRightLeftRightLeft</div>
+                        </li>						
+
+                        <li>
+                            <div class="album">
+                                <a href="">
+                                    <img src="../img/live_2003.jpg" alt="img" />
+                                </a>
+                            </div>
+                            <div class="title">Live 2003</div>
+                        </li>							
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
