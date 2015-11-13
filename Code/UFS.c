@@ -1,10 +1,13 @@
-
+#include "UFS.h"
+#include <stdio.h>
 // Fonctions UTILITAIRE
 
 int FindFirstFreeiNode(){
 	char iNodeFreeBitmap[BLOCK_SIZE];
 	ReadBlock(FREE_INODE_BITMAP, iNodeFreeBitmap);
-	for (int iNodeNum = 0; i < 40; i++) {
+	
+	int iNodeNum;
+	for (iNodeNum = 0; iNodeNum < 40; iNodeNum++) {
 		if (iNodeFreeBitmap[iNodeNum] == 1) {  // libre == 1 ,  utilisé == 0
 
 			//Devrait-on saisir le i-node immédiatement ?
@@ -17,9 +20,11 @@ int FindFirstFreeiNode(){
 int FindFirstFreeBlock(){
 	char BlockFreeBitmap[BLOCK_SIZE];
 	ReadBlock(FREE_BLOCK_BITMAP, BlockFreeBitmap);
-	for (int BlockNum = 0; i < 40; i++) {
+	
+	int BlockNum;
+	for (BlockNum = 0; BlockNum < 40; BlockNum++) {
 		if (BlockFreeBitmap[BlockNum] == 1) {  // libre == 1 ,  utilisé == 0
-			
+		
 			//Devrait-on saisir le bloc immédiatement ?
 			return BlockNum;
 		}
@@ -82,10 +87,30 @@ int ReleaseFreeBlock(UINT16 BlockNum) {
 }
 
 // Fonctions OBLIGATOIRE a implementer
-int bd_hardlink(const char *pPathExistant, const char *pPathNouveauLien);
-int bd_mv(const char *pFilename, const char *pFilenameDest);
-int bd_mkdir(const char *pDirName);
-int bd_create(const char *pFilename);
-int bd_ls(const char *pDirLocation);
-int bd_rm(const char *pFilename);
-int bd_FormatDisk();
+int bd_hardlink(const char *pPathExistant, const char *pPathNouveauLien){
+	return 1;
+}
+
+int bd_mv(const char *pFilename, const char *pFilenameDest){
+	return 1;
+}
+
+int bd_mkdir(const char *pDirName){
+	return 1;
+}
+
+int bd_create(const char *pFilename){
+	return 1;
+}
+
+int bd_ls(const char *pDirLocation){
+	return 1;
+}
+
+int bd_rm(const char *pFilename){
+	return 1;
+}
+
+int bd_FormatDisk(){
+	return 1;
+}
