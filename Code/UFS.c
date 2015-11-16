@@ -185,8 +185,10 @@ int AddDirEntry(ino iNodeDestinationDir, const char *sNameNewEntry, ino iNodeNew
 	//Écriture du bloc de donnée du répertoire
 	WriteBlock(piNode->Block[0], DirEntryBlockData);
 
-	//Ajustement de la valeur "size" du répertoire et écriture de l'iNode modifié
+	//Ajustement de la valeur "size" du répertoire 
 	piNode->iNodeStat.st_size +=  sizeof(DirEntry);
+	
+	//Écriture de l'iNode modifié
 	WriteBlock(BASE_BLOCK_INODE + iNodeDestinationDir, iNodeData);
 	return 1;
 }
@@ -215,7 +217,8 @@ int RemoveDirEntry(ino iNodeDestinationDir, ino iNodeEntryToRemove) {
 	//Recherche de l'entré de répertoire
 	int i = 0;
 	while  ( (i < nbDirEntry)  && (pDirEntry[i].iNode != iNodeEntryToRemove) ) {
-		printf("iNode existant dans répertoire : %d.\n",pDirEntry[i].iNode);
+//Debug
+//		printf("iNode existant dans répertoire : %d.\n",pDirEntry[i].iNode);
 		i++;
 	}
 
@@ -246,21 +249,21 @@ int RemoveDirEntry(ino iNodeDestinationDir, ino iNodeEntryToRemove) {
 }
 
 
-int IncrementNLink(UINT16 iNodeDiskBlockNumber) {
+int IncrementNLink(ino iNodeNumber) {
 	char BlockData[BLOCK_SIZE];
-	ReadBlock(iNodeDiskBlockNumber, BlockData);
+	ReadBlock(BASE_BLOCK_INODE + iNodeNumber, BlockData);
 	iNodeEntry *piNode= (iNodeEntry*)BlockData;
 	piNode->iNodeStat.st_nlink++;
-	WriteBlock(iNodeDiskBlockNumber, BlockData);
+	WriteBlock(BASE_BLOCK_INODE + iNodeNumber, BlockData);
 	return 1;
 }
 
-int DecrementNLink(UINT16 iNodeDiskBlockNumber) {
+int DecrementNLink(ino iNodeNumber) {
 	char BlockData[BLOCK_SIZE];
-	ReadBlock(iNodeDiskBlockNumber, BlockData);
+	ReadBlock(BASE_BLOCK_INODE + iNodeNumber, BlockData);
 	iNodeEntry *piNode= (iNodeEntry*)BlockData;
 	piNode->iNodeStat.st_nlink--;
-	WriteBlock(iNodeDiskBlockNumber, BlockData);
+	WriteBlock(BASE_BLOCK_INODE + iNodeNumber, BlockData);
 	return 1;
 }
 
@@ -308,16 +311,10 @@ int ReleaseFreeBlock(UINT16 BlockNum) {
 
 
 int bd_hardlink(const char *pPathExistant, const char *pPathNouveauLien){
-	//Affichage de l'entête de sortie à l'écran de la commande
-	printf("===== Commande ln %s %s ===== \n", pPathExistant, pPathNouveauLien);
-
 	return 1;
 }
 
 int bd_mv(const char *pFilename, const char *pFilenameDest){
-	//Affichage de l'entête de sortie à l'écran de la commande
-	printf("===== Commande mv %s %s ===== \n", pFilename, pFilenameDest);
-
 	//Recherche du iNode lié à pFilename
 	ino iNodeSource = RechercheiNode(pFilename);
 
@@ -404,10 +401,16 @@ int bd_mv(const char *pFilename, const char *pFilenameDest){
 	return 1;
 }
 
-int bd_mkdir(const char *pDirName){
-	//Affichage de l'entête de sortie à l'écran de la commande
-	printf("===== Commande mkdir %s ===== \n",pDirName);
+/******************************************************************************
+	Fonction : int bd_mkdir(const char *pDirName){
 
+	Description : fonction qui ajoute un répertoire.
+
+    pDirName : nom complet du nouveau répertoire (incluant chemin).
+
+    Retourne 1 si réussi, retourne 0 si échec.
+******************************************************************************/
+int bd_mkdir(const char *pDirName){
 	//Recherche du iNode lié à pDirLocation.
 	ino iNodeDir = RechercheiNode(pDirName);
 
@@ -458,9 +461,6 @@ int bd_mkdir(const char *pDirName){
     Retourne 1 si réussi, retourne 0 si échec.
 ******************************************************************************/
 int bd_create(const char *pFilename){
-	//Affichage de l'entête de sortie à l'écran de la commande
-	printf("===== Commande create %s ===== \n",pFilename);
-
 	//Vérification que le fichier n'existe pas déjà.
 	if (RechercheiNode(pFilename) == 0) {
 		char *sFinDirName;
@@ -562,9 +562,6 @@ int bd_create(const char *pFilename){
     pDirLocation : chemin d'accès du dossier dont on veut afficher le contenu.
 ******************************************************************************/
 int bd_ls(const char *pDirLocation){
-	//Affichage de l'entête de sortie à l'écran de la commande
-	printf("===== Commande ls %s ===== \n", pDirLocation);
-	
 	//Recherche du iNode lié à pDirLocation.
 	ino iNodeDir = RechercheiNode(pDirLocation);
 
@@ -646,9 +643,6 @@ int bd_ls(const char *pDirLocation){
 
 
 int bd_rm(const char *pFilename){
-	//Affichage de l'entête de sortie à l'écran de la commande
-	printf("===== Commande rm %s ===== \n", pFilename);
-
 	printf("iNode : %i\n", RechercheiNode(pFilename));
 
 	return 1;
@@ -666,9 +660,6 @@ int bd_rm(const char *pFilename){
     Retourne le numéro de bloc ou 0 si aucun bloc disponible.
 ******************************************************************************/
 int bd_FormatDisk(){
-	//Affichage de l'entête de sortie à l'écran de la commande
-	printf("===== Commande format ===== \n");
-
 	char Bitmap[BLOCK_SIZE]="";
 	int i = 0;
 
@@ -724,12 +715,12 @@ int bd_FormatDisk(){
 	//Création dirEntry '.'.
 	strcpy(pDirEntry[0].Filename,".");
 	pDirEntry[0].iNode = piNode->iNodeStat.st_ino;	
-	IncrementNLink(piNode->Block[0]);	
+	IncrementNLink(piNode->iNodeStat.st_ino);	
 	
 	//Création dirEntry '..'.
 	strcpy(pDirEntry[1].Filename,"..");
 	pDirEntry[1].iNode = piNode->iNodeStat.st_ino;
-	IncrementNLink(piNode->Block[0]);
+	IncrementNLink(piNode->iNodeStat.st_ino);
 
 	//Écriture du bloc de données.
 	WriteBlock(piNode->Block[0], BlockDirEntry);
