@@ -73,14 +73,14 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino NumiN
 			strcat(sName,"/");
 
 			//Appel et retourne le résultat de la fonction auxiliaire.
-			return auxRechercheiNode(pDirLocation, sName, NumiNode);
-			 //ca devrait pas être pDE[i].iNode au lieu de NumiNode
+			return auxRechercheiNode(pDirLocation, sName, pDE[i].iNode);
 		}		
 	}
 
 	//Aucun fichier ne correspond au chemin d'accès.
 	return 0;
 }
+
 
 /******************************************************************************
 	Fonction : ino RechercheiNode(const char *pDirLocation)
@@ -102,7 +102,6 @@ ino RechercheiNode(const char *pDirLocation){
 	//Appel de la fonction auxiliaire.
 	return auxRechercheiNode(pDirLocation, "/", BASE_BLOCK_INODE + ROOT_INODE);
 }
-
 
 
 /******************************************************************************
@@ -128,7 +127,6 @@ ino FindFirstFreeiNode(){
 	printf("Erreur ! Aucun iNode libre.\n");
 	return 0;
 }
-
 
 
 /******************************************************************************
@@ -291,7 +289,13 @@ int ReleaseFreeBlock(UINT16 BlockNum) {
 	return 1;
 }
 
-// Fonctions OBLIGATOIRE a implementer
+
+
+/******************************************************************************
+*					SECTION DES FONCTIONS OBLIGATOIRES  					  *
+******************************************************************************/
+
+
 int bd_hardlink(const char *pPathExistant, const char *pPathNouveauLien){
 	return 1;
 }
@@ -398,7 +402,7 @@ int bd_mkdir(const char *pDirName){
 
 				//Appel à la fonction utilitaire
 	
-
+				//verifiir espace disponible
 				return 1;
 			}
 			//Chemin d'accès n'est pas un répertoire
@@ -414,10 +418,118 @@ int bd_mkdir(const char *pDirName){
 	return 0;
 }
 
+
+/******************************************************************************
+	Fonction : int bd_create(const char *pFilename)
+
+	Description : fonction qui ajoute un fichier à un répertoire.
+
+    pDirLocation : chemin d'accès où le fichier sera créé.
+
+    Retourne 1 si réussi, retourne 0 si échec.
+******************************************************************************/
 int bd_create(const char *pFilename){
-	return 1;
+
+	//Vérification que le fichier n'existe pas déjà.
+	if (RechercheiNode(pFilename) == 0) {
+		char *sFinDirName;
+		char sFileName[FILENAME_SIZE]="";
+		char sDirPath[MAX_PATH_SIZE]="";
+
+		//Obtenir chemin d'accès du répertoire de création du fichier.
+		sFinDirName = strrchr(pFilename, '/');
+		strncpy(sDirPath, pFilename, sFinDirName-pFilename);
+		strncpy(sFileName, sFinDirName + 1, FILENAME_SIZE);
+
+		//Si la création est à la racine, ajuster la variable sDirPath à "/".
+		if (strlen(sDirPath) == 0)
+			strcpy(sDirPath, "/");
+//Debug			
+		printf("Dossier de création %s.\nNom fichier %s.\n", sDirPath, sFileName);
+
+		//Trouver le iNode du répertoire de création du fichier.
+		ino iNodeDir = RechercheiNode(sDirPath);
+
+		//Vérifier si le répertoire de création existe (0 => n'existe pas).
+		if  (iNodeDir != 0) {
+
+			//Lecture des données du iNode du répertoire de création.
+			char iNodeData[BLOCK_SIZE];
+			ReadBlock(BASE_BLOCK_INODE + iNodeDir, iNodeData);
+			iNodeEntry *piNodeDir= (iNodeEntry*)iNodeData;
+
+			//Vérifier que le chemin d'accès de création est un répertoire.
+			if (piNodeDir->iNodeStat.st_mode==S_IFDIR) {
+
+				//Vérifier s'il reste assez d'espace dans le bloc de données.
+				if (piNodeDir->iNodeStat.st_size < BLOCK_SIZE) {
+
+					//Cette partie ne fonctionne pas, ls n'affiche rien.
+					//Par contre, les blocs de données sont saisis.
+					//Le numéro de bloc saisi est parfois erratique.
+
+					//Création du iNode du nouveau fichier.
+					char iNodeDataNewFile[BLOCK_SIZE]="";
+					iNodeEntry *piNodeNewFile = (iNodeEntry*)iNodeDataNewFile;
+					piNodeNewFile->iNodeStat.st_ino = FindFirstFreeiNode();
+					piNodeNewFile->iNodeStat.st_mode = S_IFREG;
+					piNodeNewFile->iNodeStat.st_nlink = 0;
+					piNodeNewFile->iNodeStat.st_size = 0;
+					piNodeNewFile->iNodeStat.st_blocks = 1;
+					SeizeFreeiNode(piNodeNewFile->iNodeStat.st_ino);
+					piNodeNewFile->Block[0] = FindFirstFreeBlock();
+					SeizeFreeBlock(piNodeNewFile->Block[0]);
+					WriteBlock(piNodeNewFile->iNodeStat.st_ino, iNodeDataNewFile);
+
+					//Déterminer le nombre d'entrée dans le répertoire.
+					int nextDirEntry = piNodeDir->iNodeStat.st_size / sizeof(DirEntry);
+
+				 	//Leture du bloc de données du répertoire.
+					char BlockDirEntryDir[BLOCK_SIZE];
+					ReadBlock(piNodeDir->Block[0], BlockDirEntryDir);
+					DirEntry *pDirEntryDir = (DirEntry *)BlockDirEntryDir;
+
+					//Ajout de la nouvelle entrée de répertoire à la fin.
+					strcpy(pDirEntryDir[nextDirEntry].Filename,sFileName);
+					pDirEntryDir[nextDirEntry].iNode = piNodeNewFile->iNodeStat.st_ino;	
+
+					//Écriture du bloc de donnée du répertoire
+					WriteBlock(piNodeDir->Block[0], BlockDirEntryDir);
+
+					//Appel à la fonction utilitaire
+					printf("Création du fichier %s\n", pFilename);					
+
+					return 1;
+				}
+
+				//Pas assez d'espace dans le bloc de données.
+				printf("Erreur ! Espace insuffisant dans le bloc de données du répertoire %s.\n", sDirPath);
+				return 0;
+			}
+
+			//Chemin d'accès n'est pas un répertoire
+			printf("Erreur ! Le chemin d\'acces '%s' n\'est pas un répertoire.\n", sDirPath);
+			return 0;
+		}
+
+		//Chemin d'accès inexistant ! 
+		printf("Erreur ! Le chemin d\'acces '%s' n\'existe pas.\n", sDirPath);
+		return 0;
+	}
+
+	//Répertoire ou fichier du même nom déjà existant
+	printf("Erreur ! Le nom '%s' existe déjà.\n", pFilename);
+	return 0;
 }
 
+
+/******************************************************************************
+	Fonction : int bd_ls(const char *pDirLocation)
+
+	Description : fonction qui affiche le contenu détaillé d'un répertoire.
+
+    pDirLocation : chemin d'accès du dossier dont on veut afficher le contenu.
+******************************************************************************/
 int bd_ls(const char *pDirLocation){
 	
 	//Recherche du iNode lié à pDirLocation.
@@ -474,9 +586,14 @@ int bd_ls(const char *pDirLocation){
 
 		return 1;
 	}
-	//As-t-on besoin d'un message d'erreur ??
+
+	//Dossier introuvable.
+	printf("Echec de la commande ls. Dossier %s introuvable.", pDirLocation);
 	return 0;
 }
+
+
+
 
 int bd_rm(const char *pFilename){
 
@@ -485,44 +602,52 @@ int bd_rm(const char *pFilename){
 	return 1;
 }
 
+
+/******************************************************************************
+	Fonction : int bd_FormatDisk()
+
+	Description : fonction qui "formate" le fichier "DisqueVirtuel.dat"
+	              (initialise tous les blocs de données à zéro, initialise le
+	              bitmap des blocs de données, initialise le bitmap des iNodes,
+	              crée le répertoire racine).
+
+    Retourne le numéro de bloc ou 0 si aucun bloc disponible.
+******************************************************************************/
 int bd_FormatDisk(){
 
 	char Bitmap[BLOCK_SIZE]="";
 	int i = 0;
 
-	//Mise à zéro de tous les blocs
-	
-	
-	
+	//Initialisation à zéro d'un bloc de données.
+	for (i = 0; i < BLOCK_SIZE; i++) {
+		Bitmap[i] = 0;
+	}
 
+	//Mise à zéro de tous les blocs de données.
+	for (i = 0; i < BLOCK_SIZE; i++) {
+		WriteBlock(i, Bitmap);
+	}
 
 	//Initialisation de la liste des blocs de données.
-	for (i = 0; i < BLOCK_SIZE; i++) {
+	for (i = 0; i < N_BLOCK_ON_DISK; i++) {
 		if (i<=43)
-			Bitmap[i] = 0;
+			Bitmap[i] = 0;	// 0 = occupé.
 		else
-			Bitmap[i] = 1;
+			Bitmap[i] = 1;	// 1 = libre.
 	}
 
 	//Écriture de la table des blocs libres.
-
 	WriteBlock(FREE_BLOCK_BITMAP, Bitmap);
 
-
 	//Initialisation de la liste des iNodes.
-
 	for (i = 0; i < BLOCK_SIZE; i++) {
-		if (i<40)
-			Bitmap[i] = 1;	//1=libre
+		if (i > 0 && i < 40)
+			Bitmap[i] = 1;	// 1 = libre.
 		else
-			Bitmap[i] = 0;	//0=occupé
+			Bitmap[i] = 0;	// 0 = occupé.
 	}
 
-	Bitmap[0] = 0;
-
-
 	//Écriture de la table des iNodes.
-
 	WriteBlock(FREE_INODE_BITMAP, Bitmap);
 
 	//Création du iNode du répertoire racine.
@@ -555,7 +680,5 @@ int bd_FormatDisk(){
 	//Écriture du bloc de données.
 	WriteBlock(piNode->Block[0], BlockDirEntry);
 
-
 	return 1;
-
 }
