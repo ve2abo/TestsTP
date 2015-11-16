@@ -7,18 +7,18 @@
 
 
 
-/******************************************************************************
-*					SECTION DES FONCTIONS UTILITAIRES						  *
-******************************************************************************/
+/*******************************************************************************
+*					SECTION DES FONCTIONS UTILITAIRES						   *
+*******************************************************************************/
 
 // Prototypes des fonctions UTILITAIRES
-UINT16 auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino NumiNode);
+UINT16 auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino iNodeNumPrevDir);
 
 
 
-/******************************************************************************
+/*******************************************************************************
 	Fonction : ino auxRechercheiNode(const char *pDirLocation, const char 
-	           *DirCumulR, ino NumiNode)
+	           *DirCumulR, ino iNodeNumPrevDir)
 
 	Description : fonction récursive auxiliaire de recherche de l'iNode à 
 	              à partir d'un chemin d'accès.
@@ -26,15 +26,15 @@ UINT16 auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino Nu
 	pDirLocation : chaîne de caractères contenant le chemin d'accès du fichier
                    recherché.
     DirCumulR : chemin d'accès courant de la recherche.
-    NumiNode : numéro de l'iNode.
+    iNodeNumPrevDir : numéro de l'iNode.
 
     Retourne le numéro de l'iNode ou 0 si le chemin d'accès est invalide.
-******************************************************************************/
-ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino NumiNode){
+*******************************************************************************/
+ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino iNodeNumPrevDir) {
 
-	//Recherche au iNode courant.
+	//Recherche du iNode courant.
 	char iNodeData[BLOCK_SIZE];
-	ReadBlock(BASE_BLOCK_INODE + NumiNode, iNodeData);
+	ReadBlock(BASE_BLOCK_INODE + iNodeNumPrevDir, iNodeData);
 	iNodeEntry *piNode = (iNodeEntry*) iNodeData;
 
  	//Leture du bloc de données du iNode courant.
@@ -87,7 +87,7 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino NumiN
 }
 
 
-/******************************************************************************
+/*******************************************************************************
 	Fonction : ino RechercheiNode(const char *pDirLocation)
 
 	Description : trouve le numéro de iNode associé à un chemin d'accès.
@@ -96,8 +96,8 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino NumiN
 					recherché.
 
 	Retourne le numéro de l'iNode ou 0 si le chemin d'accès est invalide.
-******************************************************************************/
-ino RechercheiNode(const char *pDirLocation){
+*******************************************************************************/
+ino RechercheiNode(const char *pDirLocation) {
 
 	//Sortie si répertoire racine recherché.	
 	if (strcmp(pDirLocation, "/") == 0) {
@@ -112,15 +112,15 @@ ino RechercheiNode(const char *pDirLocation){
 }
 
 
-/******************************************************************************
+/*******************************************************************************
 	Fonction : ino FindFirstFreeiNode()
 
 	Description : fonction de recherche du premier iNode libre à partir du
 	              bitmap d'iNode libre.
 
     Retourne le numéro de l'iNode ou 0 si aucun iNode disponible.
-******************************************************************************/
-ino FindFirstFreeiNode(){
+*******************************************************************************/
+ino FindFirstFreeiNode() {
 	char iNodeFreeBitmap[BLOCK_SIZE];
 	ReadBlock(FREE_INODE_BITMAP, iNodeFreeBitmap);
 
@@ -137,15 +137,15 @@ ino FindFirstFreeiNode(){
 }
 
 
-/******************************************************************************
+/*******************************************************************************
 	Fonction : ino FindFirstFreeBlock()
 
 	Description : fonction de recherche du premier bloc libre à partir du
 	              bitmap de bloc libre.
 
     Retourne le numéro de bloc ou 0 si aucun bloc disponible.
-******************************************************************************/
-UINT16 FindFirstFreeBlock(){
+*******************************************************************************/
+UINT16 FindFirstFreeBlock() {
 	char BlockFreeBitmap[BLOCK_SIZE];
 	ReadBlock(FREE_BLOCK_BITMAP, BlockFreeBitmap);
 
@@ -161,6 +161,18 @@ UINT16 FindFirstFreeBlock(){
 	return 0;
 }
 
+/*******************************************************************************
+	Fonction : int AddDirEntry(ino iNodeDestinationDir, 
+							   const char *sNameNewEntry, ino iNodeNewEntry)
+
+	Description : Ajoute une entrée à un répertoire.
+
+	iNodeDestinationDir :	iNode du répertoire à modifier.
+	sNameNewEntry :			nom du répertoire ou fichier à ajouter.
+	iNodeNewEntry :			iNode du répertoire ou fichier à ajouter.
+
+    Retourne 1 si réussi, retourne 0 si échec.
+*******************************************************************************/
 int AddDirEntry(ino iNodeDestinationDir, const char *sNameNewEntry, ino iNodeNewEntry) {
 	//Lecture de l'iNode
 	char iNodeData[BLOCK_SIZE];
@@ -193,6 +205,17 @@ int AddDirEntry(ino iNodeDestinationDir, const char *sNameNewEntry, ino iNodeNew
 	return 1;
 }
 
+/*******************************************************************************
+	Fonction : int RemoveDirEntry(ino iNodeDestinationDir, 
+								  ino iNodeEntryToRemove)
+
+	Description : Retire une entrée à un répertoire.
+
+	iNodeDestinationDir :	iNode du répertoire à modifier.
+	iNodeNewEntry :			iNode du répertoire ou fichier à retirer.
+
+    Retourne 1 si réussi, retourne 0 si échec.
+*******************************************************************************/
 int RemoveDirEntry(ino iNodeDestinationDir, ino iNodeEntryToRemove) {
 //Debug
 //	printf("no iNode du répertoire : %d.\n",iNodeDestinationDir);
@@ -303,18 +326,105 @@ int ReleaseFreeBlock(UINT16 BlockNum) {
 	return 1;
 }
 
+/*******************************************************************************
+	Fonction : int CreateFile(UINT16 iMode, ino iNodeDestinationDir, 
+							  char *sNewName)
+
+	Description : Crée un nouveau fichier de type régulier ou répertoire.
+
+	iMode :					Mode du fichier (S_IFREG ou S_IFDIR)
+	iNodeDestinationDir :	iNode du répertoire à modifier.
+	iNodeNewEntry :			iNode du répertoire ou fichier à retirer.
+
+    Retourne 1 si réussi, retourne 0 si échec.
+*******************************************************************************/
+int CreateFile(UINT16 iMode, ino iNodeDestinationDir, char *sNewName) {
+	ino iNewiNode = FindFirstFreeiNode();		   //Recherche d'un iNode libre.
+
+	//Est-ce qu'il y a un iNode libre?
+	if (iNewiNode == 0) {
+		//Plus de iNode libre.
+		printf("Erreur ! Il n'y a plus de iNode libre.\n");
+		return 0;
+	}
+
+	UINT16 iNewBlock = FindFirstFreeBlock();		//Recherche d'un bloc libre.
+	
+	//Est-ce qu'il y a un bloc libre?
+	if (iNewBlock == 0) {
+		//Plus de bloc libre.
+		printf("Erreur ! Il n'y a plus de bloc de données libre.\n");
+		return 0;
+	}
+	
+	SeizeFreeiNode(iNewiNode);					 //Réservation du nouveau iNode.
+	SeizeFreeBlock(iNewBlock);					  //Réservation du nouveau bloc.
+
+	//Création de l'iNode
+	char NewiNodeData[BLOCK_SIZE]="";
+	iNodeEntry *pNewiNode = (iNodeEntry*)NewiNodeData;
+	pNewiNode->Block[0] = iNewBlock;
+
+	pNewiNode->iNodeStat.st_ino = iNewiNode;
+	pNewiNode->iNodeStat.st_mode = iMode;
+	pNewiNode->iNodeStat.st_nlink = 0;
+	pNewiNode->iNodeStat.st_size = 0;
+	pNewiNode->iNodeStat.st_blocks = 1;
+
+	WriteBlock(BASE_BLOCK_INODE + iNewiNode, NewiNodeData);
+
+	//Si le nouveau fichier est de type répertoire
+	if (iMode == S_IFDIR) {
+		//Ajout de l'entrée de répertoire '.'
+		if (AddDirEntry(iNewiNode, ".", iNewiNode) == 0) {
+			//Erreur lors de l'ajout de l'entrée de répertoire
+			printf("Erreur lors de l'ajout de l'entrée de répertoire.\n");
+			return 0;		
+		}
+		IncrementNLink(iNewiNode);
+
+		//Ajout de l'entrée de répertoire '..'
+		if (AddDirEntry(iNewiNode, "..", iNodeDestinationDir) == 0) {
+			//Erreur lors de l'ajout de l'entrée de répertoire
+			printf("Erreur lors de l'ajout de l'entrée de répertoire.\n");
+			return 0;		
+		}
+		IncrementNLink(iNodeDestinationDir);		
+	}
+
+	//Ajout de l'entrée de répertoire dans le répertoire parent
+	if (AddDirEntry(iNodeDestinationDir, sNewName, iNewiNode) == 0) {
+		//Erreur lors de l'ajout de l'entrée de répertoire
+		printf("Erreur lors de l'ajout de l'entrée de répertoire.\n");
+		return 0;		
+	}
+	IncrementNLink(iNewiNode);
+
+	return 1;	
+}
 
 
-/******************************************************************************
-*					SECTION DES FONCTIONS OBLIGATOIRES  					  *
-******************************************************************************/
+
+/*******************************************************************************
+*					SECTION DES FONCTIONS OBLIGATOIRES  					   *
+*******************************************************************************/
 
 
-int bd_hardlink(const char *pPathExistant, const char *pPathNouveauLien){
+int bd_hardlink(const char *pPathExistant, const char *pPathNouveauLien) {
 	return 1;
 }
 
-int bd_mv(const char *pFilename, const char *pFilenameDest){
+/*******************************************************************************
+	Fonction : bd_mv(const char *pFilename, const char *pFilenameDest)
+
+	Description : fonction qui déplace un fichier.
+
+    pFilename :		nom du fichier source (incluant chemin).
+    pFilenameDest : Nom du fichier destination (incluant chemin).
+
+    Retourne 1 si réussi, retourne 0 si échec.
+*******************************************************************************/
+int bd_mv(const char *pFilename, const char *pFilenameDest) {
 	//Recherche du iNode lié à pFilename
 	ino iNodeSource = RechercheiNode(pFilename);
 
@@ -397,61 +507,72 @@ int bd_mv(const char *pFilename, const char *pFilenameDest){
 		return 0;		
 	}
 
-	printf("Déplacement / renommage du fichier '%s' vers '%s'\n", pFilename, pFilenameDest);
 	return 1;
 }
 
-/******************************************************************************
-	Fonction : int bd_mkdir(const char *pDirName){
+/*******************************************************************************
+	Fonction : int bd_mkdir(const char *pDirName)
 
 	Description : fonction qui ajoute un répertoire.
 
     pDirName : nom complet du nouveau répertoire (incluant chemin).
 
     Retourne 1 si réussi, retourne 0 si échec.
-******************************************************************************/
-int bd_mkdir(const char *pDirName){
+*******************************************************************************/
+int bd_mkdir(const char *pDirName) {
 	//Recherche du iNode lié à pDirLocation.
 	ino iNodeDir = RechercheiNode(pDirName);
 
-	if (iNodeDir == 0) { //iNodeDir sera à 0 si pDirName n'existe pas
-		char *sNewDirName;
-		char sExistingPath[MAX_PATH_SIZE]="";
+	//Est-ce que pDirName existe ?
+	if (iNodeDir != 0) { //iNodeDir ne sera pas à 0 si pDirName existe
+		//Répertoire ou fichier du même nom déjà existant
+		printf("Erreur ! Le nom '%s' existe déjà.\n", pDirName);
+		return 0;
+	}
 
-		sNewDirName = strrchr(pDirName, '/');
+	//Extraire le nom du nouveau répertoire et le chemin depuis pDirName
+	char *sNewDirName;
+	char sExistingPath[MAX_PATH_SIZE]="";
+
+	sNewDirName = strrchr(pDirName, '/');
+	if (sNewDirName == pDirName) {
+		sNewDirName++;
+		strncpy(sExistingPath, pDirName, sNewDirName-pDirName);
+	} else {
 		strncpy(sExistingPath, pDirName, sNewDirName-pDirName);
 		sNewDirName++;
+	}
 
-		iNodeDir = RechercheiNode(sExistingPath);
+	//Recherche du iNode lié à sExistingPath
+	iNodeDir = RechercheiNode(sExistingPath);
 
-		if  (iNodeDir != 0) { //iNodeDir ne sera pas à 0 si sExistingPath existe
-			char iNodeData[BLOCK_SIZE];
-			ReadBlock(BASE_BLOCK_INODE + iNodeDir, iNodeData);
-			iNodeEntry *piNode= (iNodeEntry*)iNodeData;
-
-			if (piNode->iNodeStat.st_mode==S_IFDIR) { //On vérifie que l'on termine bien sur un répertoire
-				printf("Création du répertoire %s\n",sNewDirName);
-
-				//Appel à la fonction utilitaire
-	
-				//verifiir espace disponible
-				return 1;
-			}
-			//Chemin d'accès n'est pas un répertoire
-			printf("Erreur ! Le chemin d\'acces '%s' n\'est pas un répertoire.\n", sExistingPath);
-			return 0;
-		}
+	// Est-ce que le chemin de destination existe ?
+	if  (iNodeDir == 0) { //iNodeDir sera pas à 0 si sExistingPath n'existe pas
 		//Chemin d'accès inexistant ! 
 		printf("Erreur ! Le chemin d\'acces '%s' n\'existe pas.\n", sExistingPath);
 		return 0;
 	}
-	//Répertoire ou fichier du même nom déjà existant
-	printf("Erreur ! Le nom '%s' existe déjà.\n", pDirName);
-	return 0;
+	
+	//Lecture de l'iNode du chemin
+	char iNodeData[BLOCK_SIZE];
+	ReadBlock(BASE_BLOCK_INODE + iNodeDir, iNodeData);
+	iNodeEntry *piNode= (iNodeEntry*)iNodeData;
+
+	// Est-ce que sExistingPath est bien un répertoire ?
+	if (piNode->iNodeStat.st_mode!=S_IFDIR) { //On vérifie que l'on termine bien sur un répertoire
+		//Chemin d'accès n'est pas un répertoire
+		printf("Erreur ! Le chemin d\'acces '%s' n\'est pas un répertoire.\n", sExistingPath);
+		return 0;
+	}
+	
+	//Création du repertoire
+	CreateFile(S_IFDIR, iNodeDir, sNewDirName);
+
+	return 1;
 }
 
 
-/******************************************************************************
+/*******************************************************************************
 	Fonction : int bd_create(const char *pFilename)
 
 	Description : fonction qui ajoute un fichier à un répertoire.
@@ -459,8 +580,8 @@ int bd_mkdir(const char *pDirName){
     pDirLocation : chemin d'accès où le fichier sera créé.
 
     Retourne 1 si réussi, retourne 0 si échec.
-******************************************************************************/
-int bd_create(const char *pFilename){
+*******************************************************************************/
+int bd_create(const char *pFilename) {
 	//Vérification que le fichier n'existe pas déjà.
 	if (RechercheiNode(pFilename) == 0) {
 		char *sFinDirName;
@@ -473,8 +594,7 @@ int bd_create(const char *pFilename){
 		strncpy(sFileName, sFinDirName + 1, FILENAME_SIZE);
 
 		//Si la création est à la racine, ajuster la variable sDirPath à "/".
-		if (strlen(sDirPath) == 0)
-			strcpy(sDirPath, "/");
+		if (strlen(sDirPath) == 0) { strcpy(sDirPath, "/"); }
 //Debug			
 		printf("Dossier de création %s.\nNom fichier %s.\n", sDirPath, sFileName);
 
@@ -554,14 +674,14 @@ int bd_create(const char *pFilename){
 }
 
 
-/******************************************************************************
+/*******************************************************************************
 	Fonction : int bd_ls(const char *pDirLocation)
 
 	Description : fonction qui affiche le contenu détaillé d'un répertoire.
 
     pDirLocation : chemin d'accès du dossier dont on veut afficher le contenu.
-******************************************************************************/
-int bd_ls(const char *pDirLocation){
+*******************************************************************************/
+int bd_ls(const char *pDirLocation) {
 	//Recherche du iNode lié à pDirLocation.
 	ino iNodeDir = RechercheiNode(pDirLocation);
 
@@ -642,14 +762,14 @@ int bd_ls(const char *pDirLocation){
 
 
 
-int bd_rm(const char *pFilename){
+int bd_rm(const char *pFilename) {
 	printf("iNode : %i\n", RechercheiNode(pFilename));
 
 	return 1;
 }
 
 
-/******************************************************************************
+/*******************************************************************************
 	Fonction : int bd_FormatDisk()
 
 	Description : fonction qui "formate" le fichier "DisqueVirtuel.dat"
@@ -658,8 +778,8 @@ int bd_rm(const char *pFilename){
 	              crée le répertoire racine).
 
     Retourne le numéro de bloc ou 0 si aucun bloc disponible.
-******************************************************************************/
-int bd_FormatDisk(){
+*******************************************************************************/
+int bd_FormatDisk() {
 	char Bitmap[BLOCK_SIZE]="";
 	int i = 0;
 
@@ -701,29 +821,28 @@ int bd_FormatDisk(){
 	piNode->iNodeStat.st_ino = FindFirstFreeiNode();
 	piNode->iNodeStat.st_mode = S_IFDIR;
 	piNode->iNodeStat.st_nlink = 0;
-	piNode->iNodeStat.st_size = 32;
+	piNode->iNodeStat.st_size = 0;
 	piNode->iNodeStat.st_blocks = 1;
 	SeizeFreeiNode(piNode->iNodeStat.st_ino);
 	piNode->Block[0] = FindFirstFreeBlock();
 	SeizeFreeBlock(piNode->Block[0]);
 	WriteBlock(BASE_BLOCK_INODE + ROOT_INODE, iNodeData);
 
-	//Déclaration du bloc de données.	
-	char BlockDirEntry[BLOCK_SIZE]="";
-	DirEntry *pDirEntry = (DirEntry *)BlockDirEntry;
-
-	//Création dirEntry '.'.
-	strcpy(pDirEntry[0].Filename,".");
-	pDirEntry[0].iNode = piNode->iNodeStat.st_ino;	
+	//Ajout de l'entrée de répertoire '.'
+	if (AddDirEntry(ROOT_INODE, ".", ROOT_INODE) == 0) {
+		//Erreur lors de l'ajout de l'entrée de répertoire
+		printf("Erreur lors de l'ajout de l'entrée de répertoire.\n");
+		return 0;		
+	}
 	IncrementNLink(piNode->iNodeStat.st_ino);	
 	
-	//Création dirEntry '..'.
-	strcpy(pDirEntry[1].Filename,"..");
-	pDirEntry[1].iNode = piNode->iNodeStat.st_ino;
+	//Ajout de l'entrée de répertoire '..'
+	if (AddDirEntry(ROOT_INODE, "..", ROOT_INODE) == 0) {
+		//Erreur lors de l'ajout de l'entrée de répertoire
+		printf("Erreur lors de l'ajout de l'entrée de répertoire.\n");
+		return 0;		
+	}
 	IncrementNLink(piNode->iNodeStat.st_ino);
-
-	//Écriture du bloc de données.
-	WriteBlock(piNode->Block[0], BlockDirEntry);
 
 	return 1;
 }
