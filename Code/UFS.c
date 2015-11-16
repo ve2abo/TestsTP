@@ -34,7 +34,7 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino NumiN
 
 	//Recherche au iNode courant.
 	char iNodeData[BLOCK_SIZE];
-	ReadBlock(NumiNode, iNodeData);
+	ReadBlock(BASE_BLOCK_INODE + NumiNode, iNodeData);
 	iNodeEntry *piNode = (iNodeEntry*) iNodeData;
 
  	//Leture du bloc de données du iNode courant.
@@ -55,23 +55,28 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino NumiN
 		strcpy(sName, DirCumulR);
 		strncat(sName, pDE[i].Filename,FILENAME_SIZE);
 //Debug
-		printf("Chemin d'acces compose : %s\n", sName);
+//		printf("Chemin d'acces compose : %s\n", sName);
 		
 		//Fin d'itération si chemin d'accès équivalents.
 		if (strcmp(sName,pDirLocation) == 0) {
 //Debug
-			printf("Chemin d'acces trouve : %s\n", sName);
+//			printf("Chemin d'acces trouve : %s\n", sName);
 			return pDE[i].iNode;
 		}
 		
 		int iLongueur = strlen(sName);
 
+//Debug
+//		printf("Debug : %d %c\n", strncmp(sName,pDirLocation,iLongueur),pDirLocation[iLongueur]);
 		//Entre dans nouvelle itération si chemin d'accès cumulatifs compatibles.	
-		if (strncmp(sName,pDirLocation,iLongueur) == 0 && pDirLocation[iLongueur+1] == '/') {
+//Debug: retrait du +1 dans pDirLocation[iLongueur+1]
+		if (strncmp(sName,pDirLocation,iLongueur) == 0 && pDirLocation[iLongueur] == '/') {
 		
 			//Ajoute '/' au chemin d'accès.
 			strcat(sName,"/");
 
+//Debug
+//		printf("Appel récursif avec sName= %s et iNode = %d\n", sName, pDE[i].iNode);
 			//Appel et retourne le résultat de la fonction auxiliaire.
 			return auxRechercheiNode(pDirLocation, sName, pDE[i].iNode);
 		}		
@@ -99,8 +104,11 @@ ino RechercheiNode(const char *pDirLocation){
 		return 1;
 	}
 
+//Debug : retrait de BASE_BLOCK_INODE + dans return auxRechercheiNode(pDirLocation, "/", BASE_BLOCK_INODE + ROOT_INODE);
+
+
 	//Appel de la fonction auxiliaire.
-	return auxRechercheiNode(pDirLocation, "/", BASE_BLOCK_INODE + ROOT_INODE);
+	return auxRechercheiNode(pDirLocation, "/", ROOT_INODE);
 }
 
 
@@ -167,6 +175,9 @@ int AddDirEntry(ino iNodeDestinationDir, const char *sNameNewEntry, ino iNodeNew
 	ReadBlock(piNode->Block[0], DirEntryBlockData);
 	DirEntry *pDirEntry = (DirEntry *)DirEntryBlockData;
 
+//debug
+//	printf("Debug : %s.\n",sNameNewEntry);
+
 	//Ajout du nouvel entré de répertoire à la fin 
 	strcpy(pDirEntry[nextDirEntry].Filename,sNameNewEntry);
 	pDirEntry[nextDirEntry].iNode = iNodeNewEntry;	
@@ -182,7 +193,7 @@ int AddDirEntry(ino iNodeDestinationDir, const char *sNameNewEntry, ino iNodeNew
 
 int RemoveDirEntry(ino iNodeDestinationDir, ino iNodeEntryToRemove) {
 //Debug
-	printf("no iNode du répertoire : %d.\n",iNodeDestinationDir);
+//	printf("no iNode du répertoire : %d.\n",iNodeDestinationDir);
 	
 	//Lecture de l'iNode
 	char iNodeData[BLOCK_SIZE];
@@ -199,7 +210,7 @@ int RemoveDirEntry(ino iNodeDestinationDir, ino iNodeEntryToRemove) {
 	DirEntry *pDirEntry = (DirEntry *)DirEntryBlockData;
 
 //Debug
-	printf("no iNode à retirer : %d.\n",iNodeEntryToRemove);
+//	printf("no iNode à retirer : %d.\n",iNodeEntryToRemove);
 
 	//Recherche de l'entré de répertoire
 	int i = 0;
@@ -297,10 +308,16 @@ int ReleaseFreeBlock(UINT16 BlockNum) {
 
 
 int bd_hardlink(const char *pPathExistant, const char *pPathNouveauLien){
+	//Affichage de l'entête de sortie à l'écran de la commande
+	printf("===== Commande ln %s %s ===== \n", pPathExistant, pPathNouveauLien);
+
 	return 1;
 }
 
 int bd_mv(const char *pFilename, const char *pFilenameDest){
+	//Affichage de l'entête de sortie à l'écran de la commande
+	printf("===== Commande mv %s %s ===== \n", pFilename, pFilenameDest);
+
 	//Recherche du iNode lié à pFilename
 	ino iNodeSource = RechercheiNode(pFilename);
 
@@ -338,8 +355,17 @@ int bd_mv(const char *pFilename, const char *pFilenameDest){
 	char sDestPath[MAX_PATH_SIZE]="";
 
 	sNewFileName = strrchr(pFilenameDest, '/');
-	strncpy(sDestPath, pFilenameDest, sNewFileName-pFilenameDest);
-	sNewFileName++;
+	if (sNewFileName == pFilenameDest) {
+		sNewFileName++;
+		strncpy(sDestPath, pFilenameDest, sNewFileName-pFilenameDest);
+	} else {
+		strncpy(sDestPath, pFilenameDest, sNewFileName-pFilenameDest);
+		sNewFileName++;
+	}
+
+//Debug
+//	printf("Debug: '%s' .\n", sNewFileName);
+//	printf("Debug: '%s' .\n", sDestPath);
 
 	//Recherche du iNode lié à sDestPath
 	iNodeDest = RechercheiNode(sDestPath);
@@ -379,6 +405,9 @@ int bd_mv(const char *pFilename, const char *pFilenameDest){
 }
 
 int bd_mkdir(const char *pDirName){
+	//Affichage de l'entête de sortie à l'écran de la commande
+	printf("===== Commande mkdir %s ===== \n",pDirName);
+
 	//Recherche du iNode lié à pDirLocation.
 	ino iNodeDir = RechercheiNode(pDirName);
 
@@ -429,6 +458,8 @@ int bd_mkdir(const char *pDirName){
     Retourne 1 si réussi, retourne 0 si échec.
 ******************************************************************************/
 int bd_create(const char *pFilename){
+	//Affichage de l'entête de sortie à l'écran de la commande
+	printf("===== Commande create %s ===== \n",pFilename);
 
 	//Vérification que le fichier n'existe pas déjà.
 	if (RechercheiNode(pFilename) == 0) {
@@ -531,71 +562,92 @@ int bd_create(const char *pFilename){
     pDirLocation : chemin d'accès du dossier dont on veut afficher le contenu.
 ******************************************************************************/
 int bd_ls(const char *pDirLocation){
+	//Affichage de l'entête de sortie à l'écran de la commande
+	printf("===== Commande ls %s ===== \n", pDirLocation);
 	
 	//Recherche du iNode lié à pDirLocation.
-	ino iNodeDirLocation = RechercheiNode(pDirLocation);
+	ino iNodeDir = RechercheiNode(pDirLocation);
 
-	if (iNodeDirLocation != 0) {
-		//Lecture du iNode racine.
-		char iNodeData[BLOCK_SIZE];
-		ReadBlock(BASE_BLOCK_INODE + iNodeDirLocation, iNodeData);
-		iNodeEntry *piNode= (iNodeEntry*)iNodeData;
-
-		int nbDirEntry = piNode->iNodeStat.st_size / sizeof(DirEntry);
-	  
-	 	//Leture du bloc de données liées à la racine.
-		char DataBlockDirEntry[BLOCK_SIZE];
-		ReadBlock(piNode->Block[0], DataBlockDirEntry);
-		DirEntry *pDE = (DirEntry *)DataBlockDirEntry;
-
-		printf("ls %s \n",pDirLocation);
-
-		int i;
-		char sName[FILENAME_SIZE];
-		char cType;
-		ino iNode;
-		UINT16 sSize;
-		UINT16 iMode;
-		UINT16 iNlink;
-
-		//Affichage du contenu du répertoire cible.
-		for(i=0; i<nbDirEntry; i++) {
-			strncpy(sName, pDE[i].Filename,FILENAME_SIZE);
-			iNode = pDE[i].iNode;
-
-			char iNodeBlockDataEntry[BLOCK_SIZE];
-			ReadBlock(BASE_BLOCK_INODE + iNode, iNodeBlockDataEntry);
-			iNodeEntry *piNodeEntry= (iNodeEntry*)iNodeBlockDataEntry;
-			sSize = piNodeEntry->iNodeStat.st_size;
-			iMode = piNodeEntry->iNodeStat.st_mode;
-			iNlink = piNodeEntry->iNodeStat.st_nlink;
-
-			switch (iMode) {
-					case S_IFREG : 
-						cType = '-';
-						break;
-					case S_IFDIR : 
-						cType = 'd';
-						break;
-					default :
-						cType = '?';
-			}
-
-			printf("%c %14s size: %6d inode: %3d nlink: %3d\n", cType, sName, sSize, iNode, iNlink);
-		}
-
-		return 1;
+	// Est-ce que pDirLocation existe ?
+	if (iNodeDir == 0) { //iNodeDir sera à 0 si pDirLocation n'existe pas
+		//Dossier introuvable.
+		printf("Echec de la commande ls. Dossier %s introuvable.", pDirLocation);
+		return 0;
 	}
 
-	//Dossier introuvable.
-	printf("Echec de la commande ls. Dossier %s introuvable.", pDirLocation);
-	return 0;
+	//Lecture du iNode.
+	char iNodeData[BLOCK_SIZE];
+	ReadBlock(BASE_BLOCK_INODE + iNodeDir, iNodeData);
+	iNodeEntry *piNode= (iNodeEntry*)iNodeData;
+
+	// Est-ce que pDirLocation est bien un répertoire ?
+	if (piNode->iNodeStat.st_mode!=S_IFDIR) { //On vérifie que l'on termine bien sur un répertoire
+		//Le nom fourni n'est pas un répertoire
+		printf("Erreur ! '%s' n\'est pas un répertoire.\n", pDirLocation);
+		return 0;		
+	}
+
+	//Déterminer le nombre d'entrée de répertoire (ou "DirEntry")
+	int nbDirEntry = piNode->iNodeStat.st_size / sizeof(DirEntry);
+	  
+ 	//Leture du bloc de données liées au iNode de pDirLocation.
+	char DirEntryBlockData[BLOCK_SIZE];
+	ReadBlock(piNode->Block[0], DirEntryBlockData);
+	DirEntry *pDirEntry = (DirEntry *)DirEntryBlockData;
+
+	//Affichage de la commande suivi de pDirLocation
+	printf("ls %s \n",pDirLocation);
+
+	//Déclarations de varaibles nécessaire dans la boucle for
+	int i;
+	char sName[FILENAME_SIZE];
+	char cType;
+	ino iNode;
+	UINT16 sSize;
+	UINT16 iMode;
+	UINT16 iNlink;
+
+	//Affichage du contenu du répertoire cible.
+	for(i=0; i<nbDirEntry; i++) {
+		//Lecture du nom et du iNode par l'entrée de répertoire
+		strncpy(sName, pDirEntry[i].Filename,FILENAME_SIZE);
+		iNode = pDirEntry[i].iNode;
+
+		//Lecture du iNode de l'entrée courante
+		char iNodeDataCurDirEntry[BLOCK_SIZE];
+		ReadBlock(BASE_BLOCK_INODE + iNode, iNodeDataCurDirEntry);
+		iNodeEntry *piNodeCurDirEntry= (iNodeEntry*)iNodeDataCurDirEntry;
+		
+		//Lecture du 'size', du 'mode' et du nombre de 'nlink'.
+		sSize = piNodeCurDirEntry->iNodeStat.st_size;
+		iMode = piNodeCurDirEntry->iNodeStat.st_mode;
+		iNlink = piNodeCurDirEntry->iNodeStat.st_nlink;
+
+		//Déterminer cType à partir de iMode
+		switch (iMode) {
+				case S_IFREG : 
+					cType = '-';
+					break;
+				case S_IFDIR : 
+					cType = 'd';
+					break;
+				default :
+					cType = '?';
+		}
+
+		//Affichage d'une ligne d'entrée de répertoire
+		printf("%c %14s size: %6d inode: %3d nlink: %3d\n", cType, sName, sSize, iNode, iNlink);
+	}
+
+	return 1;
 }
 
 
 
 
 int bd_rm(const char *pFilename){
+	//Affichage de l'entête de sortie à l'écran de la commande
+	printf("===== Commande rm %s ===== \n", pFilename);
 
 	printf("iNode : %i\n", RechercheiNode(pFilename));
 
@@ -614,6 +666,8 @@ int bd_rm(const char *pFilename){
     Retourne le numéro de bloc ou 0 si aucun bloc disponible.
 ******************************************************************************/
 int bd_FormatDisk(){
+	//Affichage de l'entête de sortie à l'écran de la commande
+	printf("===== Commande format ===== \n");
 
 	char Bitmap[BLOCK_SIZE]="";
 	int i = 0;
