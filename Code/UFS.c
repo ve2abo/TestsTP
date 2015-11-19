@@ -26,9 +26,6 @@
     Retourne le numéro de l'iNode ou 0 si le chemin d'accès est invalide.
 *******************************************************************************/
 ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino iNodeNumPrevDir) {
-//Debug
-//	printf("pDirLocation : %s\t\tDirCumulR : %s\t\tiNodeNumPrevDir :%d\n", pDirLocation, DirCumulR, iNodeNumPrevDir);
-
 	//Lecture des informations du iNode courant.
 	char iNodeData[BLOCK_SIZE];
 	ReadBlock(BASE_BLOCK_INODE + iNodeNumPrevDir, iNodeData);
@@ -42,9 +39,6 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino iNode
 	//Calcul du nombre d'entrées de répertoire du iNode courant.
 	int nbDirEntry = piNode->iNodeStat.st_size / sizeof(DirEntry);
 
-//Debug
-//	printf("nbDirEntry : %d\n", nbDirEntry);
-
 	int i;
 	char sName[FILENAME_SIZE];
 	ino iNode;
@@ -56,38 +50,23 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino iNode
 		strcpy(sName, DirCumulR);
 		strncat(sName, pDE[i].Filename,FILENAME_SIZE);
 		
-//Debug
-//		printf("Chemin d'acces compose : %s\n", sName);
-
 		//Fin d'itération si chemin d'accès équivalents.
 		if (strcmp(sName,pDirLocation) == 0) {
-//Debug
-//			printf("Chemin d'acces trouve : %s\n", sName);
 			return pDE[i].iNode;
 		}
 		
 		int iLongueur = strlen(sName);
 
-//Debug
-//		printf("Debug : %d %c\n", strncmp(sName,pDirLocation,iLongueur),pDirLocation[iLongueur]);
 		//Entre dans une nouvelle itération si les chemins d'accès cumulatifs sont compatibles.	
 		if (strncmp(sName,pDirLocation,iLongueur) == 0 && pDirLocation[iLongueur] == '/') {
 		
 			//Ajoute '/' au chemin d'accès.
 			strcat(sName,"/");
 
-//Debug
-//		printf("Appel récursif avec sName= %s et iNode = %d\n", sName, pDE[i].iNode);
-
 			//Appel et retourne le résultat de la fonction auxiliaire.
 			return auxRechercheiNode(pDirLocation, sName, pDE[i].iNode);
 		}
-//Debug
-//		printf("Fin de iteration %d de la boucle for.\n", i);
 	}
-
-//Debug
-//	printf("Fin de auxRechercheiNode\n");
 
 	//Aucun fichier ne correspond au chemin d'accès.
 	return 0;
@@ -240,8 +219,6 @@ int RemoveDirEntry(ino iNodeDestinationDir, ino iNodeEntryToRemove) {
 	//Recherche de l'entré de répertoire
 	int i = 0;
 	while  ( (i < nbDirEntry)  && (pDirEntry[i].iNode != iNodeEntryToRemove) ) {
-//Debug
-//        printf("iNode existant dans répertoire : %d.\n",pDirEntry[i].iNode);
 		i++;
 	}
 
@@ -620,9 +597,6 @@ int bd_mv(const char *pFilename, const char *pFilenameDest) {
 		return 0;				
 	}
 
-//Debug
-//	printf("Debug printf : sNewFileName = %s\t\tpFilenameDest = %s \n", sNewFileName, pFilenameDest );
-
 	if (sNewFileName == pFilenameDest) {
 		sNewFileName++;
 		strncpy(sDestPath, pFilenameDest, sNewFileName-pFilenameDest);
@@ -932,9 +906,6 @@ int bd_rm(const char *pFilename) {
 		//Déterminer le nombre d'entrée de répertoire (ou "DirEntry")
 		int nbDirEntry = piNodeFile->iNodeStat.st_size / sizeof(DirEntry);
 
-//Debug
-//		printf("Dans le if du répertoire %i\n", nbDirEntry);
-
 		//Vérifier si le nombre de nlinks est supérieur à deux (dossier vide).
 		if (nbDirEntry > 2) {
 			//Le dossier n'est pas vide. Suppression impossible.
@@ -948,8 +919,7 @@ int bd_rm(const char *pFilename) {
 			char DirEntryBlockData[BLOCK_SIZE];
 			ReadBlock(piNodeFile->Block[0], DirEntryBlockData);
 			DirEntry *pDirEntry = (DirEntry *)DirEntryBlockData;
-//Debug
-//			printf("nbDirEntry =2 \n");
+
 			//Vérifier que le répertoire contient seulement '.' et '..'.
 			if (strcmp(".", pDirEntry[0].Filename) && (strcmp("..", pDirEntry[1].Filename))) {
 				//Le répertoire contient autre chose que '.' et '..'.
@@ -994,9 +964,6 @@ int bd_rm(const char *pFilename) {
 
 	//Décrémenter le nombre de lien du iNode du fichier à supprimer.
 	DecrementNLink(iNodeFile); // Une fois pour l'entrée de répertoire du parent
-
-//Debug
-//	printf("Nombre de lien : %i",piNodeFile->iNodeStat.st_nlink);
 
 	//Suppression du iNode pour un répertoire vide ou un fichier sans lien.
 	if (((piNodeFile->iNodeStat.st_mode == S_IFREG) && (piNodeFile->iNodeStat.st_nlink == 1)) 
@@ -1058,17 +1025,3 @@ int bd_FormatDisk() {
 	
 	return 1;
 }
-
-
-
-
-// QUESTION AU PROF
-
-//À quoi doit-on initialiser le iNode->Block[0] à la création d'un fichier?
-
-
-
-
-// A FAIRE
-
-//Uniformiser les messages d'erreurs
