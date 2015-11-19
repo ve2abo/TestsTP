@@ -26,6 +26,8 @@
     Retourne le numéro de l'iNode ou 0 si le chemin d'accès est invalide.
 *******************************************************************************/
 ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino iNodeNumPrevDir) {
+//Debug
+//	printf("pDirLocation : %s\t\tDirCumulR : %s\t\tiNodeNumPrevDir :%d\n", pDirLocation, DirCumulR, iNodeNumPrevDir);
 
 	//Lecture des informations du iNode courant.
 	char iNodeData[BLOCK_SIZE];
@@ -40,6 +42,9 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino iNode
 	//Calcul du nombre d'entrées de répertoire du iNode courant.
 	int nbDirEntry = piNode->iNodeStat.st_size / sizeof(DirEntry);
 
+//Debug
+//	printf("nbDirEntry : %d\n", nbDirEntry);
+
 	int i;
 	char sName[FILENAME_SIZE];
 	ino iNode;
@@ -52,27 +57,37 @@ ino auxRechercheiNode(const char *pDirLocation, const char *DirCumulR, ino iNode
 		strncat(sName, pDE[i].Filename,FILENAME_SIZE);
 		
 //Debug
-//        printf("Chemin d'acces compose : %s\n", sName);
+//		printf("Chemin d'acces compose : %s\n", sName);
 
 		//Fin d'itération si chemin d'accès équivalents.
 		if (strcmp(sName,pDirLocation) == 0) {
 //Debug
-//            printf("Chemin d'acces trouve : %s\n", sName);
+//			printf("Chemin d'acces trouve : %s\n", sName);
 			return pDE[i].iNode;
 		}
 		
 		int iLongueur = strlen(sName);
 
+//Debug
+//		printf("Debug : %d %c\n", strncmp(sName,pDirLocation,iLongueur),pDirLocation[iLongueur]);
 		//Entre dans une nouvelle itération si les chemins d'accès cumulatifs sont compatibles.	
 		if (strncmp(sName,pDirLocation,iLongueur) == 0 && pDirLocation[iLongueur] == '/') {
 		
 			//Ajoute '/' au chemin d'accès.
 			strcat(sName,"/");
 
+//Debug
+//		printf("Appel récursif avec sName= %s et iNode = %d\n", sName, pDE[i].iNode);
+
 			//Appel et retourne le résultat de la fonction auxiliaire.
 			return auxRechercheiNode(pDirLocation, sName, pDE[i].iNode);
-		}		
+		}
+//Debug
+//		printf("Fin de iteration %d de la boucle for.\n", i);
 	}
+
+//Debug
+//	printf("Fin de auxRechercheiNode\n");
 
 	//Aucun fichier ne correspond au chemin d'accès.
 	return 0;
@@ -511,6 +526,13 @@ int bd_hardlink(const char *pPathExistant, const char *pPathNouveauLien) {
 	char sNouvPath[MAX_PATH_SIZE]="";
 
 	sNewFileName = strrchr(pPathNouveauLien, '/');
+
+	//Si sNewFileName ne contient aucun '/', alors le chemin est invalide
+	if (sNewFileName==NULL) {
+		printf("Erreur ! '%s' n\'est pas un chemin valide.\n", pPathNouveauLien);
+		return 0;				
+	}
+
 	if (sNewFileName == pPathNouveauLien) {
 		sNewFileName++;
 		strncpy(sNouvPath, pPathNouveauLien, sNewFileName-pPathNouveauLien);
@@ -591,6 +613,16 @@ int bd_mv(const char *pFilename, const char *pFilenameDest) {
 	char sDestPath[MAX_PATH_SIZE]="";
 
 	sNewFileName = strrchr(pFilenameDest, '/');
+
+	//Si sNewFileName ne contient aucun '/', alors le chemin est invalide
+	if (sNewFileName==NULL) {
+		printf("Erreur ! '%s' n\'est pas un chemin valide.\n", pFilenameDest);
+		return 0;				
+	}
+
+//Debug
+//	printf("Debug printf : sNewFileName = %s\t\tpFilenameDest = %s \n", sNewFileName, pFilenameDest );
+
 	if (sNewFileName == pFilenameDest) {
 		sNewFileName++;
 		strncpy(sDestPath, pFilenameDest, sNewFileName-pFilenameDest);
@@ -660,6 +692,13 @@ int bd_mkdir(const char *pDirName) {
 	char sExistingPath[MAX_PATH_SIZE]="";
 
 	sNewDirName = strrchr(pDirName, '/');
+
+	//Si sNewFileName ne contient aucun '/', alors le chemin est invalide
+	if (sNewDirName==NULL) {
+		printf("Erreur ! '%s' n\'est pas un chemin valide.\n", pDirName);
+		return 0;				
+	}
+
 	if (sNewDirName == pDirName) {
 		sNewDirName++;
 		strncpy(sExistingPath, pDirName, sNewDirName-pDirName);
@@ -719,6 +758,12 @@ int bd_create(const char *pFilename) {
 	char *sFinDirName;
 	sFinDirName = strrchr(pFilename, '/');
 
+	//Si sFinDirName ne contient aucun '/', alors le chemin est invalide
+	if (sFinDirName==NULL) {
+		printf("Erreur ! '%s' n\'est pas un chemin valide.\n", pFilename);
+		return 0;				
+	}
+
 	//Obtenir le nom du fichier à créer à partir du chemin d'accès.
 	char sFileName[FILENAME_SIZE]="";
 	strncpy(sFileName, sFinDirName + 1, FILENAME_SIZE);
@@ -755,7 +800,7 @@ int bd_create(const char *pFilename) {
 	//Vérifier s'il reste assez d'espace dans le bloc de données.
 	if (piNodeDir->iNodeStat.st_size >= BLOCK_SIZE) {
 		//Pas assez d'espace dans le bloc de données.
-		printf("Erreur ! Espace insuffisant dans le bloc de données du répertoire %s.\n", sDirPath);
+		printf("Erreur ! Espace insuffisant dans le bloc de données du répertoire '%s'.\n", sDirPath);
 		return 0;
 	}
 
@@ -781,7 +826,7 @@ int bd_ls(const char *pDirLocation) {
 	// Est-ce que pDirLocation existe ?
 	if (iNodeDir == 0) { //iNodeDir sera à 0 si pDirLocation n'existe pas
 		//Dossier introuvable.
-		printf("Echec de la commande ls. Dossier %s introuvable.\n", pDirLocation);
+		printf("Erreur ! Dossier '%s' introuvable.\n", pDirLocation);
 		return 0;
 	}
 
@@ -846,7 +891,7 @@ int bd_ls(const char *pDirLocation) {
 		}
 
 		//Affichage d'une ligne d'entrée de répertoire
-		printf("%c %14s size: %6d inode: %3d nlink: %3d\n", cType, sName, sSize, iNode, iNlink);
+		printf(" %c %14s size: %6d inode: %3d nlink: %3d\n", cType, sName, sSize, iNode, iNlink);
 	}
 
 	return 1;
@@ -872,7 +917,7 @@ int bd_rm(const char *pFilename) {
 	//Vérifier que le fichier ou répertoire existe.
 	if (iNodeFile == 0) { 
 		//Dossier introuvable.
-		printf("Échec de la commande ls. Dossier %s introuvable.\n", pFilename);
+		printf("Erreur ! Fichier ou dossier '%s' introuvable.\n", pFilename);
 		return 0;
 	}
 
@@ -893,7 +938,7 @@ int bd_rm(const char *pFilename) {
 		//Vérifier si le nombre de nlinks est supérieur à deux (dossier vide).
 		if (nbDirEntry > 2) {
 			//Le dossier n'est pas vide. Suppression impossible.
-			printf("Échec de la commande rm. Le répertoire %s n'est pas vide.\n", pFilename);
+			printf("Erreur ! Le répertoire '%s' n'est pas vide.\n", pFilename);
 			return 0;		
 		}		
 
@@ -908,7 +953,7 @@ int bd_rm(const char *pFilename) {
 			//Vérifier que le répertoire contient seulement '.' et '..'.
 			if (strcmp(".", pDirEntry[0].Filename) && (strcmp("..", pDirEntry[1].Filename))) {
 				//Le répertoire contient autre chose que '.' et '..'.
-				printf("Échec de la commande rm. Le répertoire %s contient autre chose que '.' et '..'.\n", pFilename);
+				printf("Erreur ! Le répertoire '%s' contient autre chose que '.' et '..'.\n", pFilename);
 				return 0;
 			}
 
